@@ -1,0 +1,45 @@
+Property Description
+Willow Court
+11 Example Ln | Demoville, ST
+
+                                  ASSET SUMMARY
+ Built                                                                                    2023     County                                                      Sample County, Demo Tax District
+ Units                                                                                      272    Tax Millage Rate (2025)                                                                   58.0000
+
+Unit Mix
+
+Pro Forma
+                                                                    BROKER          MARCH 2026            MARCH 2026                MARCH 2026
+INCOME
+                                                                   PROFORMA         T3 STABILIZED       T3 ANNUALIZED                 T12 INCOME
+SCHEDULED RENT                                                      $4,816,704         $4,816,704           $4,816,704                  $4,816,704
+  Less: Loss-to-Lease                                    0.50%        ($24,084)           ($43,624)            ($43,624)                   $46,935
+  Less: Vacancy                                          6.00%      ($289,002)         ($385,336)             ($531,899)                  ($688,317)
+  Less: Concessions                                      1.00%        ($48,167)        ($192,668)           ($269,027)                  ($645,246)
+  Less: Bad Debt                                          1.00%        ($48,167)        ($120,418)          ($459,099)                  ($345,410)
+  Less: Model Units                                      0.40%          ($19,188)           ($19,188)            ($19,188)                   ($19,188)
+NET RENTAL INCOME                                                   $4,706,580         $4,055,470           $3,493,867                  $3,165,478
+  Plus: Fee Income                                                    $271,648          $206,405              $206,405                    $263,736
+  Plus: Water/Sewer/Trash/Pest/Bulk Internet Income                   $433,152          $408,404              $408,404                    $399,812
+  Plus: Valet Trash Income                                             $27,744                $0                    $0                           $0
+  Plus: Resident Insurance                                             $50,901           $40,664              $40,664                    $31,133
+  Plus: Other Income                                                   $12,204            $6,502               $6,502                    $23,870
+TOTAL OPERATING INCOME                                              $5,301,798         $4,668,040            $4,109,090                  $3,884,073
+
+OPERATING EXPENSES
+  Real Estate Taxes                                                  $509,856           $509,856              $509,856                    $509,856
+  Insurance                                                          $145,444           $145,444              $145,444                    $145,444
+  Utilities (Electric/Gas)                                           $180,000           $180,000              $180,000                    $180,000
+  Utilities (Water/Sewer)                                            $130,000           $130,000              $130,000                    $130,000
+  Payroll                                                            $490,000           $490,000              $490,000                    $490,000
+  Repairs & Maintenance/Turnover                                     $310,000           $310,000              $310,000                    $310,000
+  Grounds & Landscaping                                              $60,000           $60,000              $60,000                    $60,000
+  Pest Control/Trash                                                 $40,000           $40,000              $40,000                    $40,000
+  Administrative                                                     $260,000           $260,000              $260,000                    $260,000
+  Advertising & Promotion                                             $40,000           $40,000              $40,000                    $40,000
+  Management Fee                                                     $164,000           $164,000              $164,000                    $164,000
+  TOTAL EXPENSES                                                   $2,329,300         $2,329,300            $2,329,300                  $2,329,300
+  NET OPERATING INCOME                                              $2,972,498         $2,338,740            $1,779,790                  $1,554,773
+
+Income Notes
+Berkadia pro forma layout (synthetic).

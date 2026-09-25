@@ -1,0 +1,33 @@
+{
+  "subject": {
+    "address": "1234 Main St, Dallas, TX 75201",
+    "metro_slug": "dallas_tx"
+  },
+  "as_of": "2026-05-05",
+  "comps": [
+    {
+      "comp_id": "comp_001",
+      "name": "Uptown Heights",
+      "address": "2100 Cedar Springs Rd, Dallas, TX",
+      "units": 220,
+      "year_built": 2003,
+      "asking_rents_by_cohort": {"1br": 1480, "2br": 1920, "3br": 2350}
+    },
+    {
+      "comp_id": "comp_002",
+      "name": "Maple Ave Lofts",
+      "address": "1500 Maple Ave, Dallas, TX",
+      "units": 198,
+      "year_built": 2007,
+      "asking_rents_by_cohort": {"1br": 1455, "2br": 1880, "3br": 2275}
+    },
+    {
+      "comp_id": "comp_003",
+      "name": "Highland Park View",
+      "address": "3300 Lemmon Ave, Dallas, TX",
+      "units": 264,
+      "year_built": 2002,
+      "asking_rents_by_cohort": {"1br": 1500, "2br": 1950, "3br": 2400}
+    }
+  ]
+}

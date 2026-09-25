@@ -1,0 +1,2062 @@
+{
+  "property_id": "Sample Hills Apartments",
+  "total_units": 216,
+  "year_built": 1985,
+  "property_class": "C",
+  "market": "dallas",
+  "building_type": "garden",
+  "start_month": "2026-05",
+  "monthly_pace": 8,
+  "downtime_days": 30,
+  "roi_threshold_pct": 15.0,
+  "renovation_strategy": "on_turnover",
+  "unit_mix": [
+    {
+      "sqft": 646.0,
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "count": 74,
+      "scope_level": "standard_value_add",
+      "finish_tier": "basic",
+      "current_monthly_rent": 766.5,
+      "target_monthly_rent": 966.5
+    },
+    {
+      "sqft": 686.0,
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "count": 52,
+      "scope_level": "standard_value_add",
+      "finish_tier": "basic",
+      "current_monthly_rent": 795.92,
+      "target_monthly_rent": 995.92
+    },
+    {
+      "sqft": 905.0,
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "count": 20,
+      "scope_level": "standard_value_add",
+      "finish_tier": "basic",
+      "current_monthly_rent": 1095.26,
+      "target_monthly_rent": 1395.26
+    }
+  ],
+  "base_deal_inputs": {
+    "schema_version": "0.1",
+    "metadata": {
+      "deal_id": "Sample Hills Apartments",
+      "run_id": "rediq_114",
+      "as_of_date": "2026-03-11",
+      "analyst": "19259",
+      "purpose": "RedIQ Import"
+    },
+    "time_grid": {
+      "analysis_start_date": "2026-05-01",
+      "analysis_end_date": "2030-04-01"
+    },
+    "unit_cohorts": [
+      {
+        "cohort_id": "A1-1B1B-C",
+        "unit_type": "A1-1B1B-C",
+        "unit_count": 74,
+        "initial_inplace_rent": 766.5,
+        "sqft": 646.0
+      },
+      {
+        "cohort_id": "A1-1B1B-P",
+        "unit_type": "Renovated",
+        "unit_count": 7,
+        "initial_inplace_rent": 827.75,
+        "sqft": 646.0
+      },
+      {
+        "cohort_id": "A1-1B1B-S",
+        "unit_type": "Renovated",
+        "unit_count": 27,
+        "initial_inplace_rent": 924.926315789473,
+        "sqft": 646.0
+      },
+      {
+        "cohort_id": "A2-1B1B-C",
+        "unit_type": "A2-1B1B-C",
+        "unit_count": 52,
+        "initial_inplace_rent": 795.918918918919,
+        "sqft": 686.0
+      },
+      {
+        "cohort_id": "A2-1B1B-P",
+        "unit_type": "Renovated",
+        "unit_count": 2,
+        "initial_inplace_rent": 892.0,
+        "sqft": 686.0
+      },
+      {
+        "cohort_id": "A2-1B1B-S",
+        "unit_type": "Renovated",
+        "unit_count": 18,
+        "initial_inplace_rent": 840.90909090909,
+        "sqft": 686.0
+      },
+      {
+        "cohort_id": "B1-2B2B-C",
+        "unit_type": "B1-2B2B-C",
+        "unit_count": 20,
+        "initial_inplace_rent": 1095.26315789473,
+        "sqft": 905.0
+      },
+      {
+        "cohort_id": "B1-2B2B-P",
+        "unit_type": "Renovated",
+        "unit_count": 3,
+        "initial_inplace_rent": 1149.5,
+        "sqft": 905.0
+      },
+      {
+        "cohort_id": "B1-2B2B-S",
+        "unit_type": "Renovated",
+        "unit_count": 13,
+        "initial_inplace_rent": 1198.66153846153,
+        "sqft": 905.0
+      }
+    ],
+    "market_rent_curve": [
+      {
+        "cohort_id": "A1-1B1B-C",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "market_rent": 885.08
+      },
+      {
+        "cohort_id": "A1-1B1B-C",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "market_rent": 944.7
+      },
+      {
+        "cohort_id": "A1-1B1B-C",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "market_rent": 1000.19
+      },
+      {
+        "cohort_id": "A1-1B1B-C",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "market_rent": 1039.89
+      },
+      {
+        "cohort_id": "A1-1B1B-P",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "market_rent": 911.11
+      },
+      {
+        "cohort_id": "A1-1B1B-P",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "market_rent": 972.5
+      },
+      {
+        "cohort_id": "A1-1B1B-P",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "market_rent": 1029.61
+      },
+      {
+        "cohort_id": "A1-1B1B-P",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "market_rent": 1070.47
+      },
+      {
+        "cohort_id": "A1-1B1B-S",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "market_rent": 1041.27
+      },
+      {
+        "cohort_id": "A1-1B1B-S",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "market_rent": 1111.42
+      },
+      {
+        "cohort_id": "A1-1B1B-S",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "market_rent": 1176.69
+      },
+      {
+        "cohort_id": "A1-1B1B-S",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "market_rent": 1223.39
+      },
+      {
+        "cohort_id": "A2-1B1B-C",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "market_rent": 911.11
+      },
+      {
+        "cohort_id": "A2-1B1B-C",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "market_rent": 972.5
+      },
+      {
+        "cohort_id": "A2-1B1B-C",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "market_rent": 1029.61
+      },
+      {
+        "cohort_id": "A2-1B1B-C",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "market_rent": 1070.47
+      },
+      {
+        "cohort_id": "A2-1B1B-P",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "market_rent": 937.14
+      },
+      {
+        "cohort_id": "A2-1B1B-P",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "market_rent": 1000.28
+      },
+      {
+        "cohort_id": "A2-1B1B-P",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "market_rent": 1059.02
+      },
+      {
+        "cohort_id": "A2-1B1B-P",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "market_rent": 1101.05
+      },
+      {
+        "cohort_id": "A2-1B1B-S",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "market_rent": 1041.27
+      },
+      {
+        "cohort_id": "A2-1B1B-S",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "market_rent": 1111.42
+      },
+      {
+        "cohort_id": "A2-1B1B-S",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "market_rent": 1176.69
+      },
+      {
+        "cohort_id": "A2-1B1B-S",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "market_rent": 1223.39
+      },
+      {
+        "cohort_id": "B1-2B2B-C",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "market_rent": 1171.43
+      },
+      {
+        "cohort_id": "B1-2B2B-C",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "market_rent": 1250.35
+      },
+      {
+        "cohort_id": "B1-2B2B-C",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "market_rent": 1323.78
+      },
+      {
+        "cohort_id": "B1-2B2B-C",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "market_rent": 1376.32
+      },
+      {
+        "cohort_id": "B1-2B2B-P",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "market_rent": 1249.53
+      },
+      {
+        "cohort_id": "B1-2B2B-P",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "market_rent": 1333.7
+      },
+      {
+        "cohort_id": "B1-2B2B-P",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "market_rent": 1412.04
+      },
+      {
+        "cohort_id": "B1-2B2B-P",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "market_rent": 1468.07
+      },
+      {
+        "cohort_id": "B1-2B2B-S",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "market_rent": 1431.75
+      },
+      {
+        "cohort_id": "B1-2B2B-S",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "market_rent": 1528.2
+      },
+      {
+        "cohort_id": "B1-2B2B-S",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "market_rent": 1617.95
+      },
+      {
+        "cohort_id": "B1-2B2B-S",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "market_rent": 1682.16
+      }
+    ],
+    "loss_to_lease": [
+      {
+        "cohort_id": "A1-1B1B-C",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "A1-1B1B-P",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "A1-1B1B-S",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "A2-1B1B-C",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "A2-1B1B-P",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "A2-1B1B-S",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "B1-2B2B-C",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "B1-2B2B-P",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "B1-2B2B-S",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "A1-1B1B-C",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "A1-1B1B-P",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "A1-1B1B-S",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "A2-1B1B-C",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "A2-1B1B-P",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "A2-1B1B-S",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "B1-2B2B-C",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "B1-2B2B-P",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "B1-2B2B-S",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "A1-1B1B-C",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "A1-1B1B-P",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "A1-1B1B-S",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "A2-1B1B-C",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "A2-1B1B-P",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "A2-1B1B-S",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "B1-2B2B-C",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "B1-2B2B-P",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "B1-2B2B-S",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "A1-1B1B-C",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "A1-1B1B-P",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "A1-1B1B-S",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "A2-1B1B-C",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "A2-1B1B-P",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "A2-1B1B-S",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "B1-2B2B-C",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "B1-2B2B-P",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "ltl_percent": 0.01
+      },
+      {
+        "cohort_id": "B1-2B2B-S",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "ltl_percent": 0.01
+      }
+    ],
+    "physical_vacancy_curve": [
+      {
+        "cohort_id": "A1-1B1B-C",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "vacancy_rate": 0.3741
+      },
+      {
+        "cohort_id": "A1-1B1B-P",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "vacancy_rate": 0.3741
+      },
+      {
+        "cohort_id": "A1-1B1B-S",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "vacancy_rate": 0.3741
+      },
+      {
+        "cohort_id": "A2-1B1B-C",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "vacancy_rate": 0.3741
+      },
+      {
+        "cohort_id": "A2-1B1B-P",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "vacancy_rate": 0.3741
+      },
+      {
+        "cohort_id": "A2-1B1B-S",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "vacancy_rate": 0.3741
+      },
+      {
+        "cohort_id": "B1-2B2B-C",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "vacancy_rate": 0.3741
+      },
+      {
+        "cohort_id": "B1-2B2B-P",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "vacancy_rate": 0.3741
+      },
+      {
+        "cohort_id": "B1-2B2B-S",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "vacancy_rate": 0.3741
+      },
+      {
+        "cohort_id": "A1-1B1B-C",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "vacancy_rate": 0.2138
+      },
+      {
+        "cohort_id": "A1-1B1B-P",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "vacancy_rate": 0.2138
+      },
+      {
+        "cohort_id": "A1-1B1B-S",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "vacancy_rate": 0.2138
+      },
+      {
+        "cohort_id": "A2-1B1B-C",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "vacancy_rate": 0.2138
+      },
+      {
+        "cohort_id": "A2-1B1B-P",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "vacancy_rate": 0.2138
+      },
+      {
+        "cohort_id": "A2-1B1B-S",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "vacancy_rate": 0.2138
+      },
+      {
+        "cohort_id": "B1-2B2B-C",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "vacancy_rate": 0.2138
+      },
+      {
+        "cohort_id": "B1-2B2B-P",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "vacancy_rate": 0.2138
+      },
+      {
+        "cohort_id": "B1-2B2B-S",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "vacancy_rate": 0.2138
+      },
+      {
+        "cohort_id": "A1-1B1B-C",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "vacancy_rate": 0.1661
+      },
+      {
+        "cohort_id": "A1-1B1B-P",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "vacancy_rate": 0.1661
+      },
+      {
+        "cohort_id": "A1-1B1B-S",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "vacancy_rate": 0.1661
+      },
+      {
+        "cohort_id": "A2-1B1B-C",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "vacancy_rate": 0.1661
+      },
+      {
+        "cohort_id": "A2-1B1B-P",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "vacancy_rate": 0.1661
+      },
+      {
+        "cohort_id": "A2-1B1B-S",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "vacancy_rate": 0.1661
+      },
+      {
+        "cohort_id": "B1-2B2B-C",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "vacancy_rate": 0.1661
+      },
+      {
+        "cohort_id": "B1-2B2B-P",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "vacancy_rate": 0.1661
+      },
+      {
+        "cohort_id": "B1-2B2B-S",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "vacancy_rate": 0.1661
+      },
+      {
+        "cohort_id": "A1-1B1B-C",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "vacancy_rate": 0.1262
+      },
+      {
+        "cohort_id": "A1-1B1B-P",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "vacancy_rate": 0.1262
+      },
+      {
+        "cohort_id": "A1-1B1B-S",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "vacancy_rate": 0.1262
+      },
+      {
+        "cohort_id": "A2-1B1B-C",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "vacancy_rate": 0.1262
+      },
+      {
+        "cohort_id": "A2-1B1B-P",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "vacancy_rate": 0.1262
+      },
+      {
+        "cohort_id": "A2-1B1B-S",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "vacancy_rate": 0.1262
+      },
+      {
+        "cohort_id": "B1-2B2B-C",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "vacancy_rate": 0.1262
+      },
+      {
+        "cohort_id": "B1-2B2B-P",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "vacancy_rate": 0.1262
+      },
+      {
+        "cohort_id": "B1-2B2B-S",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "vacancy_rate": 0.1262
+      }
+    ],
+    "collection_loss_curve": [
+      {
+        "applies_to": "ALL",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "loss_rate": 0
+      },
+      {
+        "applies_to": "ALL",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "loss_rate": 0
+      },
+      {
+        "applies_to": "ALL",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "loss_rate": 0
+      },
+      {
+        "applies_to": "ALL",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "loss_rate": 0
+      }
+    ],
+    "revenue_programs": [
+      {
+        "program_id": "other_income_yr1",
+        "program_name": "Other Income (Yr1)",
+        "program_type": "tenant-based",
+        "pricing_type": "$/asset",
+        "price_value": 31268.22,
+        "eligible_units": "ALL",
+        "start_period": "2026-05",
+        "end_period": "2027-04"
+      },
+      {
+        "program_id": "other_income_yr2",
+        "program_name": "Other Income (Yr2)",
+        "program_type": "tenant-based",
+        "pricing_type": "$/asset",
+        "price_value": 35054.26,
+        "eligible_units": "ALL",
+        "start_period": "2027-05",
+        "end_period": "2028-04"
+      },
+      {
+        "program_id": "other_income_yr3",
+        "program_name": "Other Income (Yr3)",
+        "program_type": "tenant-based",
+        "pricing_type": "$/asset",
+        "price_value": 36365.24,
+        "eligible_units": "ALL",
+        "start_period": "2028-05",
+        "end_period": "2029-04"
+      },
+      {
+        "program_id": "other_income_yr4",
+        "program_name": "Other Income (Yr4)",
+        "program_type": "tenant-based",
+        "pricing_type": "$/asset",
+        "price_value": 37348.46,
+        "eligible_units": "ALL",
+        "start_period": "2029-05",
+        "end_period": "2030-04"
+      }
+    ],
+    "program_adoption_curve": [
+      {
+        "program_id": "other_income_yr1",
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "adoption_rate": 1.0
+      },
+      {
+        "program_id": "other_income_yr2",
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "adoption_rate": 1.0
+      },
+      {
+        "program_id": "other_income_yr3",
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "adoption_rate": 1.0
+      },
+      {
+        "program_id": "other_income_yr4",
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "adoption_rate": 1.0
+      }
+    ],
+    "purchase_assumptions": {
+      "purchase_price": 11556000.0,
+      "equity_contribution": 0,
+      "closing_costs": 104003.99999999999,
+      "total_equity_basis": 4430182.54,
+      "total_unlevered_basis": 16558602.75
+    },
+    "exit_assumptions": {
+      "exit_cap_rate": 0.0567,
+      "exit_month": "2030-04",
+      "sale_cost_percent": 0.014499999999999999,
+      "forward_noi_override": 1256656.7673317916
+    },
+    "opex_table": [
+      {
+        "category_name": "Repair & Maintenance",
+        "calculation_type": "per_unit",
+        "base_value": 576.0,
+        "recoverable_flag": false,
+        "growth_rate": 0.006
+      },
+      {
+        "category_name": "Contract Services",
+        "calculation_type": "fixed_annual",
+        "base_value": 11199.232800000002,
+        "recoverable_flag": false,
+        "growth_rate": 0.006
+      },
+      {
+        "category_name": "Security",
+        "calculation_type": "fixed_annual",
+        "base_value": 80000.0,
+        "recoverable_flag": false,
+        "growth_rate": 0.006
+      },
+      {
+        "category_name": "Landscaping / Grounds",
+        "calculation_type": "fixed_annual",
+        "base_value": 6000.0,
+        "recoverable_flag": false,
+        "growth_rate": 0.006
+      },
+      {
+        "category_name": "Personnel",
+        "calculation_type": "fixed_annual",
+        "base_value": 345000.0,
+        "recoverable_flag": false,
+        "growth_rate": 0.006
+      },
+      {
+        "category_name": "Marketing / Advertising",
+        "calculation_type": "per_unit",
+        "base_value": 237.0,
+        "recoverable_flag": false,
+        "growth_rate": 0.006
+      },
+      {
+        "category_name": "Administrative Expenses",
+        "calculation_type": "fixed_annual",
+        "base_value": 50000.0,
+        "recoverable_flag": false,
+        "growth_rate": 0.006
+      },
+      {
+        "category_name": "Turnover / Make-Ready",
+        "calculation_type": "per_unit",
+        "base_value": 250.0,
+        "recoverable_flag": false,
+        "growth_rate": 0.006
+      },
+      {
+        "category_name": "Electricity",
+        "calculation_type": "fixed_annual",
+        "base_value": 50000.0,
+        "recoverable_flag": true,
+        "growth_rate": 0.006
+      },
+      {
+        "category_name": "Fuel (Gas & Oil)",
+        "calculation_type": "fixed_annual",
+        "base_value": 36130.9908,
+        "recoverable_flag": true,
+        "growth_rate": 0.006
+      },
+      {
+        "category_name": "Water & Sewer",
+        "calculation_type": "fixed_annual",
+        "base_value": 134000.0,
+        "recoverable_flag": true,
+        "growth_rate": 0.006
+      },
+      {
+        "category_name": "Other Utilities",
+        "calculation_type": "fixed_annual",
+        "base_value": 74000.0,
+        "recoverable_flag": true,
+        "growth_rate": 0.006
+      },
+      {
+        "category_name": "Insurance",
+        "calculation_type": "per_unit",
+        "base_value": 671.0,
+        "recoverable_flag": false,
+        "growth_rate": 0.006
+      },
+      {
+        "category_name": "Real Estate Taxes",
+        "calculation_type": "fixed_annual",
+        "base_value": 270410.4,
+        "recoverable_flag": false,
+        "growth_rate": 0.025
+      },
+      {
+        "category_name": "Property Management Fee",
+        "calculation_type": "percent_egr",
+        "base_value": 0.0275,
+        "recoverable_flag": false
+      },
+      {
+        "category_name": "Other Operating Expenses",
+        "calculation_type": "fixed_annual",
+        "base_value": 0.02,
+        "recoverable_flag": false,
+        "growth_rate": 0.006
+      }
+    ],
+    "utility_recovery_rules": [
+      {
+        "utility_category": "ALL",
+        "recovery_basis": "percent_of_expense",
+        "recovery_rate": 0
+      }
+    ],
+    "capex_schedule": [
+      {
+        "category": "Bring back online 12 down units ($30k/unit)",
+        "capex_type": "one_time",
+        "amount": 38333.33,
+        "month": "2026-05"
+      },
+      {
+        "category": "Bring back online 12 down units ($30k/unit)",
+        "capex_type": "one_time",
+        "amount": 38333.33,
+        "month": "2026-06"
+      },
+      {
+        "category": "Bring back online 12 down units ($30k/unit)",
+        "capex_type": "one_time",
+        "amount": 38333.33,
+        "month": "2026-07"
+      },
+      {
+        "category": "Bring back online 12 down units ($30k/unit)",
+        "capex_type": "one_time",
+        "amount": 38333.33,
+        "month": "2026-08"
+      },
+      {
+        "category": "Bring back online 12 down units ($30k/unit)",
+        "capex_type": "one_time",
+        "amount": 38333.33,
+        "month": "2026-09"
+      },
+      {
+        "category": "Bring back online 12 down units ($30k/unit)",
+        "capex_type": "one_time",
+        "amount": 38333.33,
+        "month": "2026-10"
+      },
+      {
+        "category": "Bring back online 12 down units ($30k/unit)",
+        "capex_type": "one_time",
+        "amount": 38333.33,
+        "month": "2026-11"
+      },
+      {
+        "category": "Bring back online 12 down units ($30k/unit)",
+        "capex_type": "one_time",
+        "amount": 38333.33,
+        "month": "2026-12"
+      },
+      {
+        "category": "Bring back online 12 down units ($30k/unit)",
+        "capex_type": "one_time",
+        "amount": 38333.33,
+        "month": "2027-01"
+      },
+      {
+        "category": "Bring back online 12 down units ($30k/unit)",
+        "capex_type": "one_time",
+        "amount": 38333.33,
+        "month": "2027-02"
+      },
+      {
+        "category": "Bring back online 12 down units ($30k/unit)",
+        "capex_type": "one_time",
+        "amount": 38333.33,
+        "month": "2027-03"
+      },
+      {
+        "category": "Bring back online 12 down units ($30k/unit)",
+        "capex_type": "one_time",
+        "amount": 38333.33,
+        "month": "2027-04"
+      },
+      {
+        "category": "Build New Leasing office / Community Area / Convert Leasing Office to Gym",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-05"
+      },
+      {
+        "category": "Build New Leasing office / Community Area / Convert Leasing Office to Gym",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-06"
+      },
+      {
+        "category": "Build New Leasing office / Community Area / Convert Leasing Office to Gym",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-07"
+      },
+      {
+        "category": "Build New Leasing office / Community Area / Convert Leasing Office to Gym",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-08"
+      },
+      {
+        "category": "Build New Leasing office / Community Area / Convert Leasing Office to Gym",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-09"
+      },
+      {
+        "category": "Build New Leasing office / Community Area / Convert Leasing Office to Gym",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-10"
+      },
+      {
+        "category": "Build New Leasing office / Community Area / Convert Leasing Office to Gym",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-11"
+      },
+      {
+        "category": "Build New Leasing office / Community Area / Convert Leasing Office to Gym",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-12"
+      },
+      {
+        "category": "Build New Leasing office / Community Area / Convert Leasing Office to Gym",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2027-01"
+      },
+      {
+        "category": "Build New Leasing office / Community Area / Convert Leasing Office to Gym",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2027-02"
+      },
+      {
+        "category": "Build New Leasing office / Community Area / Convert Leasing Office to Gym",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2027-03"
+      },
+      {
+        "category": "Build New Leasing office / Community Area / Convert Leasing Office to Gym",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2027-04"
+      },
+      {
+        "category": "Retaining Wall Repairs",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-05"
+      },
+      {
+        "category": "Retaining Wall Repairs",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-06"
+      },
+      {
+        "category": "Retaining Wall Repairs",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-07"
+      },
+      {
+        "category": "Retaining Wall Repairs",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-08"
+      },
+      {
+        "category": "Retaining Wall Repairs",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-09"
+      },
+      {
+        "category": "Retaining Wall Repairs",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-10"
+      },
+      {
+        "category": "Retaining Wall Repairs",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-11"
+      },
+      {
+        "category": "Retaining Wall Repairs",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-12"
+      },
+      {
+        "category": "Retaining Wall Repairs",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2027-01"
+      },
+      {
+        "category": "Retaining Wall Repairs",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2027-02"
+      },
+      {
+        "category": "Retaining Wall Repairs",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2027-03"
+      },
+      {
+        "category": "Retaining Wall Repairs",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2027-04"
+      },
+      {
+        "category": "Property Wide Repaint, Carpentry, Masonry, Roof, water reduction",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-05"
+      },
+      {
+        "category": "Property Wide Repaint, Carpentry, Masonry, Roof, water reduction",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-06"
+      },
+      {
+        "category": "Property Wide Repaint, Carpentry, Masonry, Roof, water reduction",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-07"
+      },
+      {
+        "category": "Property Wide Repaint, Carpentry, Masonry, Roof, water reduction",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-08"
+      },
+      {
+        "category": "Property Wide Repaint, Carpentry, Masonry, Roof, water reduction",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-09"
+      },
+      {
+        "category": "Property Wide Repaint, Carpentry, Masonry, Roof, water reduction",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-10"
+      },
+      {
+        "category": "Property Wide Repaint, Carpentry, Masonry, Roof, water reduction",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-11"
+      },
+      {
+        "category": "Property Wide Repaint, Carpentry, Masonry, Roof, water reduction",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2026-12"
+      },
+      {
+        "category": "Property Wide Repaint, Carpentry, Masonry, Roof, water reduction",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2027-01"
+      },
+      {
+        "category": "Property Wide Repaint, Carpentry, Masonry, Roof, water reduction",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2027-02"
+      },
+      {
+        "category": "Property Wide Repaint, Carpentry, Masonry, Roof, water reduction",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2027-03"
+      },
+      {
+        "category": "Property Wide Repaint, Carpentry, Masonry, Roof, water reduction",
+        "capex_type": "one_time",
+        "amount": 41666.67,
+        "month": "2027-04"
+      },
+      {
+        "category": "Landscaping / Lighting Package",
+        "capex_type": "one_time",
+        "amount": 12500.0,
+        "month": "2026-05"
+      },
+      {
+        "category": "Landscaping / Lighting Package",
+        "capex_type": "one_time",
+        "amount": 12500.0,
+        "month": "2026-06"
+      },
+      {
+        "category": "Landscaping / Lighting Package",
+        "capex_type": "one_time",
+        "amount": 12500.0,
+        "month": "2026-07"
+      },
+      {
+        "category": "Landscaping / Lighting Package",
+        "capex_type": "one_time",
+        "amount": 12500.0,
+        "month": "2026-08"
+      },
+      {
+        "category": "Landscaping / Lighting Package",
+        "capex_type": "one_time",
+        "amount": 12500.0,
+        "month": "2026-09"
+      },
+      {
+        "category": "Landscaping / Lighting Package",
+        "capex_type": "one_time",
+        "amount": 12500.0,
+        "month": "2026-10"
+      },
+      {
+        "category": "Landscaping / Lighting Package",
+        "capex_type": "one_time",
+        "amount": 12500.0,
+        "month": "2026-11"
+      },
+      {
+        "category": "Landscaping / Lighting Package",
+        "capex_type": "one_time",
+        "amount": 12500.0,
+        "month": "2026-12"
+      },
+      {
+        "category": "Landscaping / Lighting Package",
+        "capex_type": "one_time",
+        "amount": 12500.0,
+        "month": "2027-01"
+      },
+      {
+        "category": "Landscaping / Lighting Package",
+        "capex_type": "one_time",
+        "amount": 12500.0,
+        "month": "2027-02"
+      },
+      {
+        "category": "Landscaping / Lighting Package",
+        "capex_type": "one_time",
+        "amount": 12500.0,
+        "month": "2027-03"
+      },
+      {
+        "category": "Landscaping / Lighting Package",
+        "capex_type": "one_time",
+        "amount": 12500.0,
+        "month": "2027-04"
+      },
+      {
+        "category": "Fence & Gate Repairs",
+        "capex_type": "one_time",
+        "amount": 16666.67,
+        "month": "2026-05"
+      },
+      {
+        "category": "Fence & Gate Repairs",
+        "capex_type": "one_time",
+        "amount": 16666.67,
+        "month": "2026-06"
+      },
+      {
+        "category": "Fence & Gate Repairs",
+        "capex_type": "one_time",
+        "amount": 16666.67,
+        "month": "2026-07"
+      },
+      {
+        "category": "Fence & Gate Repairs",
+        "capex_type": "one_time",
+        "amount": 16666.67,
+        "month": "2026-08"
+      },
+      {
+        "category": "Fence & Gate Repairs",
+        "capex_type": "one_time",
+        "amount": 16666.67,
+        "month": "2026-09"
+      },
+      {
+        "category": "Fence & Gate Repairs",
+        "capex_type": "one_time",
+        "amount": 16666.67,
+        "month": "2026-10"
+      },
+      {
+        "category": "Fence & Gate Repairs",
+        "capex_type": "one_time",
+        "amount": 16666.67,
+        "month": "2026-11"
+      },
+      {
+        "category": "Fence & Gate Repairs",
+        "capex_type": "one_time",
+        "amount": 16666.67,
+        "month": "2026-12"
+      },
+      {
+        "category": "Fence & Gate Repairs",
+        "capex_type": "one_time",
+        "amount": 16666.67,
+        "month": "2027-01"
+      },
+      {
+        "category": "Fence & Gate Repairs",
+        "capex_type": "one_time",
+        "amount": 16666.67,
+        "month": "2027-02"
+      },
+      {
+        "category": "Fence & Gate Repairs",
+        "capex_type": "one_time",
+        "amount": 16666.67,
+        "month": "2027-03"
+      },
+      {
+        "category": "Fence & Gate Repairs",
+        "capex_type": "one_time",
+        "amount": 16666.67,
+        "month": "2027-04"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 25000.0,
+        "month": "2026-05"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 25000.0,
+        "month": "2026-06"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 25000.0,
+        "month": "2026-07"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 25000.0,
+        "month": "2026-08"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 25000.0,
+        "month": "2026-09"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 25000.0,
+        "month": "2026-10"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 25000.0,
+        "month": "2026-11"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 25000.0,
+        "month": "2026-12"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 25000.0,
+        "month": "2027-01"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 25000.0,
+        "month": "2027-02"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 25000.0,
+        "month": "2027-03"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 25000.0,
+        "month": "2027-04"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2027-05"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2027-06"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2027-07"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2027-08"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2027-09"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2027-10"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2027-11"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2027-12"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2028-01"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2028-02"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2028-03"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2028-04"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2028-05"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2028-06"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2028-07"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2028-08"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2028-09"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2028-10"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2028-11"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2028-12"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2029-01"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2029-02"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2029-03"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2029-04"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2029-05"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2029-06"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2029-07"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2029-08"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2029-09"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2029-10"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2029-11"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2029-12"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2030-01"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2030-02"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2030-03"
+      },
+      {
+        "category": "Additional Buffer + $50k/yr HVAC Replace + $50k/yr buffer",
+        "capex_type": "one_time",
+        "amount": 8333.33,
+        "month": "2030-04"
+      }
+    ],
+    "debt_terms": {
+      "commitment": 12345879.0,
+      "rate": 0.0675,
+      "amort_years": 30,
+      "io_months": 36,
+      "term_months": 60
+    },
+    "renovation_programs": [
+      {
+        "program_id": "reno_A1-1B1B-C_yr1",
+        "program_name": "Renovation - A1-1B1B-C (Yr1)",
+        "target_cohort": "A1-1B1B-C",
+        "output_cohort": "A1-1B1B-C_reno",
+        "renovation_cost_per_unit": 16000.0,
+        "rent_premium_monthly": 200.0,
+        "downtime_days": 30,
+        "strategy": "on_turnover",
+        "start_month": "2026-05",
+        "end_month": "2027-04",
+        "monthly_pace": 3,
+        "max_units": 25,
+        "post_renovation_market_rent": 1050.0
+      },
+      {
+        "program_id": "reno_A1-1B1B-C_yr2",
+        "program_name": "Renovation - A1-1B1B-C (Yr2)",
+        "target_cohort": "A1-1B1B-C",
+        "output_cohort": "A1-1B1B-C_reno",
+        "renovation_cost_per_unit": 16400.0,
+        "rent_premium_monthly": 200.0,
+        "downtime_days": 30,
+        "strategy": "on_turnover",
+        "start_month": "2027-05",
+        "end_month": "2028-04",
+        "monthly_pace": 2,
+        "max_units": 15,
+        "post_renovation_market_rent": 1050.0
+      },
+      {
+        "program_id": "reno_A1-1B1B-C_yr3",
+        "program_name": "Renovation - A1-1B1B-C (Yr3)",
+        "target_cohort": "A1-1B1B-C",
+        "output_cohort": "A1-1B1B-C_reno",
+        "renovation_cost_per_unit": 16810.0,
+        "rent_premium_monthly": 200.0,
+        "downtime_days": 30,
+        "strategy": "on_turnover",
+        "start_month": "2028-05",
+        "end_month": "2029-04",
+        "monthly_pace": 2,
+        "max_units": 15,
+        "post_renovation_market_rent": 1050.0
+      },
+      {
+        "program_id": "reno_A1-1B1B-P_yr1",
+        "program_name": "Renovation - A1-1B1B-P (Yr1)",
+        "target_cohort": "A1-1B1B-P",
+        "output_cohort": "A1-1B1B-P_reno",
+        "renovation_cost_per_unit": 14000.0,
+        "rent_premium_monthly": 175.0,
+        "downtime_days": 30,
+        "strategy": "on_turnover",
+        "start_month": "2026-05",
+        "end_month": "2027-04",
+        "monthly_pace": 1,
+        "max_units": 3,
+        "post_renovation_market_rent": 1050.0
+      },
+      {
+        "program_id": "reno_A1-1B1B-P_yr2",
+        "program_name": "Renovation - A1-1B1B-P (Yr2)",
+        "target_cohort": "A1-1B1B-P",
+        "output_cohort": "A1-1B1B-P_reno",
+        "renovation_cost_per_unit": 14350.0,
+        "rent_premium_monthly": 175.0,
+        "downtime_days": 30,
+        "strategy": "on_turnover",
+        "start_month": "2027-05",
+        "end_month": "2028-04",
+        "monthly_pace": 1,
+        "max_units": 2,
+        "post_renovation_market_rent": 1050.0
+      },
+      {
+        "program_id": "reno_A1-1B1B-P_yr3",
+        "program_name": "Renovation - A1-1B1B-P (Yr3)",
+        "target_cohort": "A1-1B1B-P",
+        "output_cohort": "A1-1B1B-P_reno",
+        "renovation_cost_per_unit": 14708.75,
+        "rent_premium_monthly": 175.0,
+        "downtime_days": 30,
+        "strategy": "on_turnover",
+        "start_month": "2028-05",
+        "end_month": "2029-04",
+        "monthly_pace": 1,
+        "max_units": 2,
+        "post_renovation_market_rent": 1050.0
+      },
+      {
+        "program_id": "reno_A2-1B1B-C_yr1",
+        "program_name": "Renovation - A2-1B1B-C (Yr1)",
+        "target_cohort": "A2-1B1B-C",
+        "output_cohort": "A2-1B1B-C_reno",
+        "renovation_cost_per_unit": 16000.0,
+        "rent_premium_monthly": 200.0,
+        "downtime_days": 30,
+        "strategy": "on_turnover",
+        "start_month": "2026-05",
+        "end_month": "2027-04",
+        "monthly_pace": 2,
+        "max_units": 20,
+        "post_renovation_market_rent": 1075.0
+      },
+      {
+        "program_id": "reno_A2-1B1B-C_yr2",
+        "program_name": "Renovation - A2-1B1B-C (Yr2)",
+        "target_cohort": "A2-1B1B-C",
+        "output_cohort": "A2-1B1B-C_reno",
+        "renovation_cost_per_unit": 16400.0,
+        "rent_premium_monthly": 200.0,
+        "downtime_days": 30,
+        "strategy": "on_turnover",
+        "start_month": "2027-05",
+        "end_month": "2028-04",
+        "monthly_pace": 2,
+        "max_units": 15,
+        "post_renovation_market_rent": 1075.0
+      },
+      {
+        "program_id": "reno_A2-1B1B-C_yr3",
+        "program_name": "Renovation - A2-1B1B-C (Yr3)",
+        "target_cohort": "A2-1B1B-C",
+        "output_cohort": "A2-1B1B-C_reno",
+        "renovation_cost_per_unit": 16810.0,
+        "rent_premium_monthly": 200.0,
+        "downtime_days": 30,
+        "strategy": "on_turnover",
+        "start_month": "2028-05",
+        "end_month": "2029-04",
+        "monthly_pace": 2,
+        "max_units": 15,
+        "post_renovation_market_rent": 1075.0
+      },
+      {
+        "program_id": "reno_A2-1B1B-P_yr2",
+        "program_name": "Renovation - A2-1B1B-P (Yr2)",
+        "target_cohort": "A2-1B1B-P",
+        "output_cohort": "A2-1B1B-P_reno",
+        "renovation_cost_per_unit": 14350.0,
+        "rent_premium_monthly": 175.0,
+        "downtime_days": 30,
+        "strategy": "on_turnover",
+        "start_month": "2027-05",
+        "end_month": "2028-04",
+        "monthly_pace": 1,
+        "max_units": 1,
+        "post_renovation_market_rent": 1075.0
+      },
+      {
+        "program_id": "reno_A2-1B1B-P_yr3",
+        "program_name": "Renovation - A2-1B1B-P (Yr3)",
+        "target_cohort": "A2-1B1B-P",
+        "output_cohort": "A2-1B1B-P_reno",
+        "renovation_cost_per_unit": 14708.75,
+        "rent_premium_monthly": 175.0,
+        "downtime_days": 30,
+        "strategy": "on_turnover",
+        "start_month": "2028-05",
+        "end_month": "2029-04",
+        "monthly_pace": 1,
+        "max_units": 1,
+        "post_renovation_market_rent": 1075.0
+      },
+      {
+        "program_id": "reno_B1-2B2B-C_yr1",
+        "program_name": "Renovation - B1-2B2B-C (Yr1)",
+        "target_cohort": "B1-2B2B-C",
+        "output_cohort": "B1-2B2B-C_reno",
+        "renovation_cost_per_unit": 18000.0,
+        "rent_premium_monthly": 300.0,
+        "downtime_days": 30,
+        "strategy": "on_turnover",
+        "start_month": "2026-05",
+        "end_month": "2027-04",
+        "monthly_pace": 1,
+        "max_units": 2,
+        "post_renovation_market_rent": 1425.0
+      },
+      {
+        "program_id": "reno_B1-2B2B-C_yr2",
+        "program_name": "Renovation - B1-2B2B-C (Yr2)",
+        "target_cohort": "B1-2B2B-C",
+        "output_cohort": "B1-2B2B-C_reno",
+        "renovation_cost_per_unit": 18450.0,
+        "rent_premium_monthly": 300.0,
+        "downtime_days": 30,
+        "strategy": "on_turnover",
+        "start_month": "2027-05",
+        "end_month": "2028-04",
+        "monthly_pace": 1,
+        "max_units": 2,
+        "post_renovation_market_rent": 1425.0
+      },
+      {
+        "program_id": "reno_B1-2B2B-C_yr3",
+        "program_name": "Renovation - B1-2B2B-C (Yr3)",
+        "target_cohort": "B1-2B2B-C",
+        "output_cohort": "B1-2B2B-C_reno",
+        "renovation_cost_per_unit": 18911.25,
+        "rent_premium_monthly": 300.0,
+        "downtime_days": 30,
+        "strategy": "on_turnover",
+        "start_month": "2028-05",
+        "end_month": "2029-04",
+        "monthly_pace": 1,
+        "max_units": 2,
+        "post_renovation_market_rent": 1425.0
+      },
+      {
+        "program_id": "reno_B1-2B2B-P_yr1",
+        "program_name": "Renovation - B1-2B2B-P (Yr1)",
+        "target_cohort": "B1-2B2B-P",
+        "output_cohort": "B1-2B2B-P_reno",
+        "renovation_cost_per_unit": 16000.0,
+        "rent_premium_monthly": 225.0,
+        "downtime_days": 30,
+        "strategy": "on_turnover",
+        "start_month": "2026-05",
+        "end_month": "2027-04",
+        "monthly_pace": 1,
+        "max_units": 1,
+        "post_renovation_market_rent": 1425.0
+      },
+      {
+        "program_id": "reno_B1-2B2B-P_yr2",
+        "program_name": "Renovation - B1-2B2B-P (Yr2)",
+        "target_cohort": "B1-2B2B-P",
+        "output_cohort": "B1-2B2B-P_reno",
+        "renovation_cost_per_unit": 16400.0,
+        "rent_premium_monthly": 225.0,
+        "downtime_days": 30,
+        "strategy": "on_turnover",
+        "start_month": "2027-05",
+        "end_month": "2028-04",
+        "monthly_pace": 1,
+        "max_units": 1,
+        "post_renovation_market_rent": 1425.0
+      }
+    ],
+    "fund_assumptions": {
+      "sponsor_equity_pct": 0.1,
+      "lp_equity_pct": 0.9,
+      "preferred_return": 0.08,
+      "promote_splits": [
+        {
+          "tier": "I",
+          "hurdle_irr": 0.0,
+          "lp_share": 1.0,
+          "gp_share": 0.0
+        },
+        {
+          "tier": "II",
+          "hurdle_irr": 0.0,
+          "lp_share": 1.0,
+          "gp_share": 0.0
+        },
+        {
+          "tier": "III",
+          "hurdle_irr": 0.08,
+          "lp_share": 1.0,
+          "gp_share": 0.0
+        },
+        {
+          "tier": "IV",
+          "hurdle_irr": 0.08,
+          "lp_share": 0.8,
+          "gp_share": 0.2
+        }
+      ],
+      "acquisition_fee_pct": 0.01,
+      "asset_management_fee_pct": 0.01,
+      "disposition_fee_pct": 0.0,
+      "annual_partnership_expenses": 5000.0,
+      "partnership_closing_costs": 10000.0,
+      "am_fee_schedule": [
+        46285.17,
+        48434.54,
+        48434.54,
+        48434.54
+      ]
+    },
+    "capex_upfront_funded": [
+      {
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "amount": 3424000.0000000005
+      },
+      {
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "amount": 688350.0
+      },
+      {
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "amount": 686248.75
+      },
+      {
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "amount": 99999.99999999999
+      }
+    ],
+    "replacement_reserves": [
+      {
+        "start_period": "2026-05",
+        "end_period": "2027-04",
+        "annual_amount": 59400.0
+      },
+      {
+        "start_period": "2027-05",
+        "end_period": "2028-04",
+        "annual_amount": 60885.0
+      },
+      {
+        "start_period": "2028-05",
+        "end_period": "2029-04",
+        "annual_amount": 62407.125
+      },
+      {
+        "start_period": "2029-05",
+        "end_period": "2030-04",
+        "annual_amount": 63967.30312499999
+      }
+    ]
+  }
+}

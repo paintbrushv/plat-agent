@@ -1,0 +1,198 @@
+{
+  "schema_version": "0.1",
+  "metadata": {
+    "deal_id": "PROPERTY-TAX-ACCEPTANCE",
+    "run_id": "property-tax-acceptance-run",
+    "as_of_date": "2026-07-21",
+    "analyst": "Test Analyst",
+    "purpose": "Property-tax blocked-resume acceptance",
+    "address": "100 Millage Test Way, Dallas, TX 75201",
+    "market": "dallas_tx",
+    "year_built": 2000,
+    "property_summary": {}
+  },
+  "time_grid": {
+    "analysis_start_date": "2026-07",
+    "analysis_end_date": "2031-06"
+  },
+  "unit_cohorts": [
+    {
+      "cohort_id": "1BR",
+      "unit_type": "1BR",
+      "unit_count": 50,
+      "initial_inplace_rent": 1200
+    },
+    {
+      "cohort_id": "2BR",
+      "unit_type": "2BR",
+      "unit_count": 50,
+      "initial_inplace_rent": 1500
+    }
+  ],
+  "market_rent_curve": [
+    {
+      "cohort_id": "1BR",
+      "start_period": "2026-07",
+      "end_period": "2031-06",
+      "market_rent": 1250
+    },
+    {
+      "cohort_id": "2BR",
+      "start_period": "2026-07",
+      "end_period": "2031-06",
+      "market_rent": 1550
+    }
+  ],
+  "loss_to_lease": [
+    {
+      "cohort_id": "1BR",
+      "start_period": "2026-07",
+      "end_period": "2031-06",
+      "ltl_percent": 0.03
+    },
+    {
+      "cohort_id": "2BR",
+      "start_period": "2026-07",
+      "end_period": "2031-06",
+      "ltl_percent": 0.03
+    }
+  ],
+  "physical_vacancy_curve": [
+    {
+      "cohort_id": "1BR",
+      "start_period": "2026-07",
+      "end_period": "2031-06",
+      "vacancy_rate": 0.05
+    },
+    {
+      "cohort_id": "2BR",
+      "start_period": "2026-07",
+      "end_period": "2031-06",
+      "vacancy_rate": 0.05
+    }
+  ],
+  "collection_loss_curve": [
+    {
+      "applies_to": "ALL",
+      "start_period": "2026-07",
+      "end_period": "2031-06",
+      "loss_rate": 0.01
+    }
+  ],
+  "revenue_programs": [
+    {
+      "program_id": "RUBS",
+      "program_name": "RUBS Utility Recovery",
+      "program_type": "recovery",
+      "pricing_type": "$/unit",
+      "price_value": 50,
+      "eligible_units": "ALL",
+      "start_period": "2026-07"
+    }
+  ],
+  "program_adoption_curve": [
+    {
+      "program_id": "RUBS",
+      "start_period": "2026-07",
+      "end_period": "2031-06",
+      "adoption_rate": 0.9
+    }
+  ],
+  "utility_recovery_rules": [
+    {
+      "utility_category": "ALL",
+      "recovery_basis": "percent_of_expense",
+      "recovery_rate": 1.0,
+      "lag_months": 0
+    }
+  ],
+  "opex_table": [
+    {
+      "category_name": "Real Estate Taxes",
+      "calculation_type": "fixed_annual",
+      "base_value": 123456,
+      "growth_rate": 0.02,
+      "recoverable_flag": false
+    },
+    {
+      "category_name": "Insurance",
+      "calculation_type": "fixed_annual",
+      "base_value": 60000,
+      "growth_rate": 0.03,
+      "recoverable_flag": false
+    },
+    {
+      "category_name": "R&M",
+      "calculation_type": "per_unit",
+      "base_value": 750,
+      "growth_rate": 0.03,
+      "recoverable_flag": false
+    },
+    {
+      "category_name": "Management Fee",
+      "calculation_type": "percent_egr",
+      "base_value": 0.04,
+      "growth_rate": 0.0,
+      "recoverable_flag": false
+    },
+    {
+      "category_name": "Utilities",
+      "calculation_type": "per_unit_monthly",
+      "base_value": 85,
+      "growth_rate": 0.03,
+      "recoverable_flag": true
+    }
+  ],
+  "purchase_assumptions": {
+    "purchase_price": 10000000,
+    "closing_costs": 150000,
+    "equity_contribution": 3500000,
+    "total_equity_basis": 3650000
+  },
+  "debt_terms": {
+    "commitment": 6500000,
+    "rate": 0.0575,
+    "amort_years": 30,
+    "io_months": 12
+  },
+  "exit_assumptions": {
+    "exit_cap_rate": 0.055,
+    "sale_cost_percent": 0.02,
+    "exit_month": "2031-06"
+  },
+  "fund_assumptions": {
+    "sponsor_equity_pct": 0.05,
+    "lp_equity_pct": 0.95,
+    "preferred_return": 0.08,
+    "acquisition_fee_pct": 0.01,
+    "asset_management_fee_pct": 0.01,
+    "disposition_fee_pct": 0.01,
+    "annual_partnership_expenses": 25000,
+    "partnership_closing_costs": 50000,
+    "promote_splits": [
+      {
+        "tier": "Pref",
+        "hurdle_irr": 0.08,
+        "lp_share": 1.0,
+        "gp_share": 0.0
+      },
+      {
+        "tier": "Promote",
+        "hurdle_irr": 0.0,
+        "lp_share": 0.7,
+        "gp_share": 0.3
+      }
+    ]
+  },
+  "growth_assumptions": {
+    "growth_type": "annual_compound",
+    "annual_growth_rate": 0.03
+  },
+  "replacement_reserves": [
+    {
+      "start_period": "2026-07",
+      "end_period": "2031-06",
+      "annual_amount": 25000
+    }
+  ]
+}

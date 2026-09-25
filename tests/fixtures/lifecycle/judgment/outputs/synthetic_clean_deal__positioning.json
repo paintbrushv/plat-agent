@@ -1,0 +1,19 @@
+{
+  "positioning": {
+    "value": "value_add",
+    "confidence": 0.85
+  },
+  "leverage": {
+    "ltv": 0.65,
+    "rate": 0.0575,
+    "amort_years": 30,
+    "io_months": 12,
+    "source": "v1_hardcoded"
+  },
+  "engine_inputs_relative": "judgment/engine_inputs.json",
+  "blockers": [],
+  "validated_fields": [
+    {"name": "rent_growth", "broker_value": 0.030, "data_value": 0.030, "delta_flag": "agree"},
+    {"name": "exit_cap", "broker_value": 0.058, "data_value": 0.058, "delta_flag": "agree"}
+  ]
+}

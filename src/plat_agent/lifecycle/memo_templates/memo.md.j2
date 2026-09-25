@@ -1,0 +1,155 @@
+{% if passthrough_banner -%}
+{{ passthrough_banner }}
+
+{% endif -%}
+{% if draft_mode_canonical_absent -%}
+# Deal Memo — {{ deal_slug }} (DRAFT)
+
+> **Draft — intake blocked.** Required deal data was not produced (intake
+> step did not write `canonical_deal.json`). This memo is a placeholder
+> rendered so the analyst can see exactly what is missing. Returns,
+> business-plan thesis, and broker-claim validation will populate once the
+> blockers below are cleared and the lifecycle is resumed.
+
+**Run:** {{ run_id }}
+
+## Recommendation
+
+**NEEDS_DATA** — pending analyst input.
+
+## Returns at a glance
+
+_Data not available._ Underwriting did not run because intake/judgment did
+not produce a canonical deal record.
+
+## Business plan thesis
+
+_Data not available._
+
+## Broker claim validation
+
+_Data not available._
+
+## Outstanding blockers
+
+{% if blockers -%}
+{% for b in blockers -%}
+- `{{ b.step }}/{{ b.id }}`: {{ b.description }}
+{% if b.resolution_hint -%}
+      Resolution: {{ b.resolution_hint }}
+{% endif -%}
+{% endfor %}
+{%- else -%}
+_(No blockers parsed from punchlist.json — see lifecycle state for failure cause.)_
+{%- endif %}
+
+## Path to artifacts
+
+{% for label, path in artifact_paths.items() -%}
+- {{ label }}: `{{ path }}`
+{% endfor %}
+{% else -%}
+# Deal Memo — {{ deal.slug }}
+
+{% if deal.address %}**Address:** {{ deal.address }}  {% endif %}
+{% if deal.units %}**Units:** {{ deal.units }}  {% endif %}
+{% if deal.vintage %}**Vintage:** {{ deal.vintage }}  {% endif %}
+{% if deal.broker %}**Broker:** {{ deal.broker }}  {% endif %}
+{% if deal.asking_price %}**Asking:** ${{ "{:,.0f}".format(deal.asking_price) }} ({% if deal.ppu %}${{ "{:,.0f}".format(deal.ppu) }}/unit{% else %}n/a{% endif %}){% endif %}
+
+---
+
+## Recommendation
+
+**{{ recommendation.value }}** (confidence {{ "{:.0%}".format(recommendation.confidence) }})
+
+## Returns at a glance
+
+| Metric | Value |
+| --- | --- |
+| Levered IRR | {{ returns.levered_irr_fmt }} |
+| Levered Equity Multiple | {{ returns.levered_em_fmt }} |
+| Min DSCR | {{ returns.min_dscr_fmt }} |
+| Going-in Cap | {{ returns.going_in_cap_fmt }} |
+| Exit Cap | {{ returns.exit_cap_fmt }} |
+
+{% if property_tax -%}
+## Property tax provenance
+
+Property tax: {{ "{:.3f}".format(property_tax.millage_rate_mills) }} mills ({{ "{:.4f}".format(property_tax.decimal_tax_rate * 100) }}%) × {{ "{:.2f}".format(property_tax.assessment_ratio * 100) }}% assessment ratio
+Basis: ${{ "{:,.0f}".format(property_tax.purchase_price_basis) }} purchase price → ${{ "{:,.0f}".format(property_tax.assessed_value_basis) }} assessed-value basis
+Annual ad valorem tax: ${{ "{:,.2f}".format(property_tax.annual_ad_valorem_tax) }}
+Source: {{ property_tax.source }} — {{ property_tax.source_locator }}
+Assessment-ratio override: {% if property_tax.analyst_override %}Yes{% else %}No{% endif %}
+
+{% endif -%}
+## Business plan thesis
+
+{{ thesis_text }}
+
+{% if revenue_quality -%}
+## Ancillary income bridge
+
+The broker's Year-1 other income, trailing ancillary evidence, and the house
+credit are reconciled below. The engine-net amount reflects modeled collection
+timing and is the amount carried into the full Year-1 cash flow.
+
+| Basis | Annual amount |
+| --- | ---: |
+| Broker Year-1 other income | ${{ "{:,.0f}".format(revenue_quality.source_summary.broker_year1_other_income) }} |
+| T12 grouped ancillary income | ${{ "{:,.0f}".format(revenue_quality.source_summary.t12_grouped_ancillary_income) }} |
+| House annual gross credit | ${{ "{:,.0f}".format(revenue_quality.source_summary.house_annual_credit) }} |
+{% if revenue_quality.net_house_credit is not none -%}
+| Engine-net Year-1 credit | ${{ "{:,.0f}".format(revenue_quality.net_house_credit) }} |
+{% if revenue_quality.paired_expense_total -%}
+| Paired expense retained in OpEx | ${{ "{:,.0f}".format(revenue_quality.paired_expense_total) }} |
+{% endif %}
+{% endif %}
+
+| Program | Broker | T12 | House credit | Paired expense | Decision |
+| --- | ---: | ---: | ---: | ---: | --- |
+{% for line in revenue_quality.lines -%}
+| `{{ line.line_item }}` | ${{ "{:,.0f}".format(line.broker_amount) }} | ${{ "{:,.0f}".format(line.t12_amount) }} | ${{ "{:,.0f}".format(line.house_credit) }} | ${{ "{:,.0f}".format(line.paired_expense or 0) }} | {{ line.decision }} |
+{% endfor %}
+
+{% endif -%}
+## Broker claim validation
+
+{% if broker_claims -%}
+| Claim | Broker | Data-derived | Selected | Δ | Flag |
+| --- | --- | --- | --- | --- | --- |
+{% for c in broker_claims -%}
+| {{ c.label }} | {{ c.broker_fmt }} | {{ c.data_fmt }} | {{ c.selected_fmt }} | {{ c.delta_fmt }} | {{ c.flag }} |
+{% endfor %}
+{%- else -%}
+_No broker claims to reconcile (judgment did not emit deltas)._
+{%- endif %}
+
+## Risks & blockers
+
+{% if risks or blockers or insurance_review_per_unit -%}
+{% if blockers -%}
+**Blockers:**
+{% for b in blockers -%}
+- `{{ b.step }}/{{ b.id }}`: {{ b.description }}
+{% endfor %}
+{%- endif %}
+{% if insurance_review_per_unit -%}
+**Diligence:** ${{ "{:,.0f}".format(insurance_review_per_unit) }}/unit insurance assumption requires claims-history review.
+{% endif %}
+{% if risks -%}
+**Sanity flags:**
+{% for r in risks -%}
+- `{{ r }}`
+{% endfor %}
+{%- endif %}
+{%- else -%}
+_No risks or blockers surfaced._
+{%- endif %}
+
+## Path to artifacts
+
+{% for label, path in artifact_paths.items() -%}
+- {{ label }}: `{{ path }}`
+{% endfor %}
+{% endif -%}

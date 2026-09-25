@@ -1,0 +1,12 @@
+{
+  "metadata": {
+    "deal_id": "project_essex",
+    "address": "1234 Essex Ave, Dallas, TX 75201",
+    "year_built": 2005,
+    "broker": "CBRE",
+    "as_of_date": "2026-05-05",
+    "analyst": "lifecycle-memo-test"
+  },
+  "purchase_assumptions": {"purchase_price": 28000000},
+  "unit_cohorts": [{"cohort_id": "1B1B", "unit_count": 240, "start_period": 1, "end_period": 60, "market_rent": 1450}]
+}

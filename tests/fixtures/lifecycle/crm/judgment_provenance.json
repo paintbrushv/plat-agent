@@ -1,0 +1,7 @@
+{
+  "status": "ok",
+  "input_hash": "abc",
+  "contract_version": "1.0.0",
+  "thesis_path": "/abs/runs/deals/d/outputs/r/judgment/thesis.md",
+  "judgment_engine": "deterministic_v1"
+}

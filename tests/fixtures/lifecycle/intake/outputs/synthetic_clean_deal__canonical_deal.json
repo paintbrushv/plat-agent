@@ -1,0 +1,28 @@
+{
+  "metadata": {
+    "address": "1234 Main St, Dallas, TX 75201",
+    "year_built": 2005,
+    "market": "dallas_tx",
+    "submarket": "uptown",
+    "asset_class": "B+"
+  },
+  "purchase_assumptions": {
+    "purchase_price": 28000000,
+    "going_in_cap_rate": 0.052,
+    "exit_cap_rate": 0.058
+  },
+  "unit_cohorts": [
+    {"cohort_id": "1br", "unit_count": 120, "avg_sqft": 720, "in_place_rent": 1450},
+    {"cohort_id": "2br", "unit_count": 80, "avg_sqft": 1050, "in_place_rent": 1875},
+    {"cohort_id": "3br", "unit_count": 40, "avg_sqft": 1340, "in_place_rent": 2300}
+  ],
+  "opex_table": {
+    "payroll": 540000,
+    "repairs_maintenance": 320000,
+    "utilities": 410000,
+    "insurance": 145000,
+    "real_estate_tax": 525000,
+    "management_fee": 159300
+  },
+  "noi": 3210700
+}

@@ -1,0 +1,9 @@
+{
+  "deal_slug": "project_essex",
+  "run_id": "run_002",
+  "status": "running",
+  "steps_completed": ["intake", "comps", "judgment", "underwriting"],
+  "blockers": [],
+  "started_at": "2026-05-05T16:00:00Z",
+  "judgment_mode": "passthrough"
+}

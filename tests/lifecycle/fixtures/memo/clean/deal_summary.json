@@ -1,0 +1,9 @@
+{
+  "metrics": {
+    "irr": {"levered_irr": 0.152},
+    "equity_multiple": {"levered_em": 1.78},
+    "yields": {"going_in_cap_rate": 0.052, "exit_cap_rate": 0.058},
+    "dscr": {"average_dscr": 1.45, "minimum_dscr": 1.28}
+  },
+  "feasibility_verdict": "pass"
+}

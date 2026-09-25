@@ -1,0 +1,8 @@
+DEBT GUIDANCE — The Demo at Maple Grove
+Prepared by the mortgage brokerage team for the prospective buyer.
+
+Proposed Financing Terms, Loan Option A:
+  Benchmark Rate: hold-matched Treasury plus a spread of 150 bps.
+  All-in-Rate: 4.60% fixed, 25-year amortization, 5-year term.
+  Max LTV: 70% at Min DSCR 1.25x on UW NOI.
+  Loan Option B: 5.00% fixed, same structure.

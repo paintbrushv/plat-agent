@@ -1,0 +1,31 @@
+{
+  "metadata": {
+    "deal_name": "Project Essex",
+    "address": "1234 Main St, Dallas, TX 75201",
+    "market": "dallas_tx",
+    "year_built": 1985,
+    "as_of_date": "2026-05-06",
+    "analyst": "Test Analyst"
+  },
+  "unit_cohorts": [
+    {
+      "cohort_id": "essex_1br",
+      "unit_count": 80,
+      "bedrooms": 1,
+      "bathrooms": 1.0,
+      "sqft": 720,
+      "in_place_rent": 1450
+    },
+    {
+      "cohort_id": "essex_2br",
+      "unit_count": 160,
+      "bedrooms": 2,
+      "bathrooms": 2.0,
+      "sqft": 1050,
+      "in_place_rent": 2050
+    }
+  ],
+  "purchase_assumptions": {
+    "purchase_price": 28000000
+  }
+}

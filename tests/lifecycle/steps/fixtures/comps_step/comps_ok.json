@@ -1,0 +1,47 @@
+{
+  "subject": {
+    "address": "1234 Main St, Dallas, TX 75201",
+    "submarket": "Uptown",
+    "metro_slug": "dallas_tx",
+    "metro_display": "DFW"
+  },
+  "as_of": "2026-05-06",
+  "comps": [
+    {
+      "comp_id": "comp_001",
+      "name": "Foo Apartments",
+      "address": "456 Side St",
+      "units": 240,
+      "year_built": 2005,
+      "tier": "mid_market",
+      "unit_types": [
+        {"unit_type": "1BR", "sqft": 720, "face_rent": 1500.0, "rent_psf": 2.08}
+      ]
+    },
+    {
+      "comp_id": "comp_002",
+      "name": "Bar Apartments",
+      "address": "789 Other St",
+      "units": 180,
+      "year_built": 2010,
+      "unit_types": [
+        {"unit_type": "1BR", "sqft": 700, "face_rent": 1525.0, "rent_psf": 2.18}
+      ]
+    },
+    {
+      "comp_id": "comp_003",
+      "name": "Baz Apartments",
+      "address": "111 Third St",
+      "units": 320,
+      "year_built": 2003,
+      "unit_types": [
+        {"unit_type": "1BR", "sqft": 740, "face_rent": 1475.0, "rent_psf": 1.99}
+      ]
+    }
+  ],
+  "submarket_aggregates": {
+    "rent_growth_trailing_12mo": 0.038,
+    "submarket_vacancy": 0.06,
+    "comp_count": 3
+  }
+}

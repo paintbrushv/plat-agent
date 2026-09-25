@@ -1,0 +1,66 @@
+{
+  "schema_version": "0.1",
+  "metadata": {
+    "deal_id": "TEST-001",
+    "run_id": "screen_001",
+    "as_of_date": "2026-01-01",
+    "analyst": "plat-agent",
+    "purpose": "Screening",
+    "notes": "Minimal canonical deal used by the SDK orchestrator's screen_deal smoke test. Mirrors multifamily-underwriting/runs/examples/deal_001_run_001 but with deal_id=TEST-001."
+  },
+  "time_grid": {
+    "analysis_start_date": "2026-01-01",
+    "analysis_end_date": "2026-03-01"
+  },
+  "unit_cohorts": [
+    {
+      "cohort_id": "A",
+      "unit_type": "1B",
+      "unit_count": 10,
+      "sqft": 650,
+      "initial_inplace_rent": 1000
+    },
+    {
+      "cohort_id": "B",
+      "unit_type": "2B",
+      "unit_count": 5,
+      "sqft": 900,
+      "initial_inplace_rent": 1500
+    }
+  ],
+  "market_rent_curve": [
+    { "cohort_id": "A", "start_period": "2026-01", "end_period": "2026-03", "market_rent": 1200 },
+    { "cohort_id": "B", "start_period": "2026-01", "end_period": "2026-03", "market_rent": 1700 }
+  ],
+  "loss_to_lease": [
+    { "cohort_id": "A", "start_period": "2026-01", "end_period": "2026-03", "ltl_percent": 0.1 },
+    { "cohort_id": "B", "start_period": "2026-01", "end_period": "2026-03", "ltl_percent": 0.1 }
+  ],
+  "physical_vacancy_curve": [
+    { "cohort_id": "A", "start_period": "2026-01", "end_period": "2026-03", "vacancy_rate": 0.2 },
+    { "cohort_id": "B", "start_period": "2026-01", "end_period": "2026-03", "vacancy_rate": 0.2 }
+  ],
+  "collection_loss_curve": [
+    { "applies_to": "ALL", "start_period": "2026-01", "end_period": "2026-03", "loss_rate": 0.05 }
+  ],
+  "revenue_programs": [
+    {
+      "program_id": "parking",
+      "program_name": "Parking",
+      "program_type": "tenant-based",
+      "pricing_type": "$/unit",
+      "price_value": 50,
+      "eligible_units": "ALL",
+      "start_period": "2026-01",
+      "end_period": "2026-03"
+    }
+  ],
+  "program_adoption_curve": [
+    { "program_id": "parking", "start_period": "2026-01", "end_period": "2026-01", "adoption_rate": 0.5 },
+    { "program_id": "parking", "start_period": "2026-02", "end_period": "2026-02", "adoption_rate": 0.6 },
+    { "program_id": "parking", "start_period": "2026-03", "end_period": "2026-03", "adoption_rate": 0.8 }
+  ],
+  "program_capacity": [
+    { "program_id": "parking", "total_capacity": 6 }
+  ]
+}

@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68.0", "setuptools-scm>=8.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "plat-agent"
+version = "0.1.0"
+description = "Plat orchestration agent — deal analysis via MCP tool composition"
+requires-python = ">=3.11"
+dependencies = [
+    "click>=8.0",
+    "pydantic>=2.0",
+    "mcp>=1.0",
+    "anyio>=4.0",
+    "httpx",
+    "claude-agent-sdk>=0.1.68",
+    "jinja2>=3.1",
+    "pyyaml>=6.0.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.23",
+    "pytest-cov>=4.0",
+]
+intake = [
+    "openpyxl>=3.1",
+]
+
+[project.scripts]
+plat = "plat_agent.cli:cli"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+markers = [
+    "e2e_live: live end-to-end test that hits a private cloud drive + Playwright + LLMs (slow, ~15min)",
+    "integration: cross-repository integration test requiring explicitly configured sibling repositories",
+]

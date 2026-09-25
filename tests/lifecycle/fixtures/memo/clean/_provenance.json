@@ -1,0 +1,7 @@
+{
+  "status": "ok",
+  "input_hash": "deadbeef",
+  "contract_version": "v1.0",
+  "written_at": "2026-05-05T17:30:00Z",
+  "feasibility_sanity_flags": ["exit_cap_below_going_in"]
+}

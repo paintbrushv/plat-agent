@@ -1,0 +1,19 @@
+{
+  "subject": {
+    "address": "1234 Main St, Dallas, TX 75201",
+    "metro_slug": "dallas_tx"
+  },
+  "as_of": "2026-05-06",
+  "comps": [
+    {
+      "comp_id": "comp_001",
+      "name": "Foo Apartments",
+      "address": "456 Side St",
+      "units": 240,
+      "year_built": 2005,
+      "unit_types": [
+        {"unit_type": "1BR", "sqft": 720, "face_rent": 1500.0, "rent_psf": 2.08}
+      ]
+    }
+  ]
+}
