@@ -7,7 +7,9 @@ synthetic assumption, not an extracted fact, and not a property record.
 
 from __future__ import annotations
 
+import importlib.util
 import os
+import subprocess
 import sys
 from dataclasses import dataclass
 from decimal import Decimal
@@ -17,8 +19,10 @@ from plat_agent.dispatch.sibling import primary_checkout_root
 
 ASSUMPTION_KIND = "synthetic_assumption"
 INTERIOR_ONLY = "interior_only"
+INTERIOR_PLUS_SYNTHETIC_ROOF = "interior plus this synthetic roof"
 YEAR_2_UNLEVERED_NOI = Decimal("1200004.80")
 PURCHASE_PRICE = Decimal("13500000")
+DEFERRED_COSTMODEL_SHA = "518142ecb8771e52fcc9985237fe1a6f97a76168"
 
 # Stated for TEST-001. These are not read off the underwriting fixture.
 SYNTHETIC_INTERIOR_SCOPE: dict = {
@@ -54,6 +58,20 @@ SYNTHETIC_INTERIOR_SCOPE: dict = {
 # stated assumption, parallel to the scope, not a renamed fixture field.
 SYNTHETIC_INTERIOR_UNIT_COUNTS = (50, 50)
 
+# One stated roof replacement. Quantity 100 is not read from a building record.
+SYNTHETIC_DEFERRED_ROOF: dict = {
+    "assumption_kind": ASSUMPTION_KIND,
+    "extracted_fact": False,
+    "note": "Synthetic assumption for TEST-001. Not an extracted fact.",
+    "item": "roof_full_replacement",
+    "quantity": 100,
+    "schedule": {
+        "start_month": "2026-07",
+        "monthly_pace": 1,
+        "downtime_days": 21,
+    },
+}
+
 
 @dataclass(frozen=True)
 class InteriorOnlyYield:
@@ -75,6 +93,33 @@ class InteriorOnlyYield:
         return {
             "capex": format(self.capex, "f"),
             "per_unit_high": list(self.per_unit_high),
+            "year_2_unlevered_yield_on_cost": None if ratio is None else format(ratio, "f"),
+            "label": self.label,
+            "bid": self.bid,
+            "withheld": self.withheld,
+            "withhold_reason": self.withhold_reason,
+        }
+
+
+@dataclass(frozen=True)
+class InteriorPlusRoofYield:
+    """Interior capex plus one synthetic roof. Not a bid."""
+
+    interior_capex: Decimal
+    roof_capex: Decimal
+    capex: Decimal
+    year_2_unlevered_yield_on_cost: Decimal | None
+    label: str
+    bid: None
+    withheld: bool
+    withhold_reason: str
+
+    def as_dict(self) -> dict:
+        ratio = self.year_2_unlevered_yield_on_cost
+        return {
+            "interior_capex": format(self.interior_capex, "f"),
+            "roof_capex": format(self.roof_capex, "f"),
+            "capex": format(self.capex, "f"),
             "year_2_unlevered_yield_on_cost": None if ratio is None else format(ratio, "f"),
             "label": self.label,
             "bid": self.bid,
@@ -145,6 +190,78 @@ def interior_only_yield() -> InteriorOnlyYield:
     )
 
 
+def deferred_costmodel_root() -> Path:
+    """Deferred-maintenance costmodel tree. Never the primary checkout."""
+    raw = os.environ.get("PLAT_COSTMODEL_DEFERRED_PATH")
+    if raw:
+        root = Path(raw).expanduser().resolve()
+    else:
+        root = (
+            primary_checkout_root().parent / ".worktrees" / "plat-costmodel-deferred-maintenance"
+        ).resolve()
+    primary = (primary_checkout_root().parent / "plat-costmodel").resolve()
+    if root == primary:
+        raise RuntimeError("refusing the primary costmodel checkout for deferred maintenance")
+    estimator = root / "src" / "plat_costmodel" / "deferred_estimator.py"
+    if not estimator.is_file():
+        raise FileNotFoundError(f"deferred estimator not found at {estimator}")
+    sha = subprocess.check_output(
+        ["git", "-C", str(root), "rev-parse", "HEAD"],
+        text=True,
+    ).strip()
+    if sha != DEFERRED_COSTMODEL_SHA:
+        raise RuntimeError(f"deferred costmodel SHA is {sha}, expected {DEFERRED_COSTMODEL_SHA}")
+    return root
+
+
+def synthetic_roof_capex(scope: dict | None = None) -> Decimal:
+    """Price the stated roof item with ``estimate_deferred_maintenance``.
+
+    Uses that tree's knowledge base and ``total_high``. Quantity stays the
+    value on the scope.
+    """
+    scope = SYNTHETIC_DEFERRED_ROOF if scope is None else scope
+    if scope.get("assumption_kind") != ASSUMPTION_KIND or scope.get("extracted_fact") is not False:
+        raise ValueError("deferred roof must be labeled a synthetic assumption, not an extracted fact")
+    item = scope["item"]
+    quantity = scope["quantity"]
+    if isinstance(quantity, bool) or not isinstance(quantity, int) or quantity < 1:
+        raise ValueError("deferred roof quantity must be a positive integer")
+    root = deferred_costmodel_root()
+    estimate = _load_estimate_deferred_maintenance(root)
+    schedule = _load_program_schedule().model_validate(scope["schedule"])
+    result = estimate(
+        items=[item],
+        quantity=quantity,
+        schedule=schedule,
+        kb=_deferred_knowledge_base(root),
+    )
+    total_high = result["total_high"]
+    if total_high is None:
+        raise ValueError("synthetic roof was not priced")
+    return Decimal(str(total_high))
+
+
+def interior_plus_synthetic_roof_yield() -> InteriorPlusRoofYield:
+    """Interior capex plus the synthetic roof. No bid."""
+    interior_total, _per_unit = interior_capex(
+        SYNTHETIC_INTERIOR_SCOPE,
+        unit_counts=SYNTHETIC_INTERIOR_UNIT_COUNTS,
+    )
+    roof = synthetic_roof_capex()
+    capex = interior_total + roof
+    return InteriorPlusRoofYield(
+        interior_capex=interior_total,
+        roof_capex=roof,
+        capex=capex,
+        year_2_unlevered_yield_on_cost=_year_2_yield(YEAR_2_UNLEVERED_NOI, PURCHASE_PRICE, capex),
+        label=INTERIOR_PLUS_SYNTHETIC_ROOF,
+        bid=None,
+        withheld=True,
+        withhold_reason="The 5.5% exit cap still withholds this deal.",
+    )
+
+
 def _require_scope(scope: dict) -> None:
     if scope.get("assumption_kind") != ASSUMPTION_KIND or scope.get("extracted_fact") is not False:
         raise ValueError("interior scope must be labeled a synthetic assumption, not an extracted fact")
@@ -185,6 +302,37 @@ def _load_program_schedule():
     from plat_costmodel.schemas.scope import ProgramSchedule
 
     return ProgramSchedule
+
+
+def _load_estimate_deferred_maintenance(root: Path):
+    module_path = root / "src" / "plat_costmodel" / "deferred_estimator.py"
+    src = str(root / "src")
+    if "plat_costmodel" not in sys.modules and src not in sys.path:
+        sys.path.insert(0, src)
+    spec = importlib.util.spec_from_file_location(
+        "plat_costmodel_deferred_maintenance_estimator",
+        module_path,
+    )
+    if spec is None or spec.loader is None:
+        raise ImportError(f"cannot load deferred estimator from {module_path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    estimate = module.estimate_deferred_maintenance
+    loaded = Path(estimate.__code__.co_filename).resolve()
+    if loaded != module_path.resolve():
+        raise RuntimeError(f"refusing deferred estimator loaded from {loaded}")
+    primary = (primary_checkout_root().parent / "plat-costmodel").resolve()
+    if primary in loaded.parents:
+        raise RuntimeError(f"refusing deferred estimator from the primary checkout at {loaded}")
+    return estimate
+
+
+def _deferred_knowledge_base(root: Path) -> dict:
+    import yaml
+
+    path = root / "src" / "plat_costmodel" / "data" / "knowledge_base.yaml"
+    with path.open(encoding="utf-8") as handle:
+        return yaml.safe_load(handle)
 
 
 def _year_2_yield(noi: Decimal, price: Decimal, capex: Decimal) -> Decimal | None:

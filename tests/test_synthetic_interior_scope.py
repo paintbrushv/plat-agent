@@ -10,14 +10,18 @@ from pathlib import Path
 
 import pytest
 
-from plat_agent.dispatch.sibling import underwriting_checkout
+from plat_agent.dispatch.sibling import primary_checkout_root, underwriting_checkout
 from plat_agent.lifecycle.synthetic_interior_scope import (
+    SYNTHETIC_DEFERRED_ROOF,
     SYNTHETIC_INTERIOR_SCOPE,
     SYNTHETIC_INTERIOR_UNIT_COUNTS,
     YEAR_2_UNLEVERED_NOI,
     PURCHASE_PRICE,
+    deferred_costmodel_root,
     interior_capex,
     interior_only_yield,
+    interior_plus_synthetic_roof_yield,
+    synthetic_roof_capex,
 )
 
 _MODULE = Path(inspect.getfile(interior_only_yield))
@@ -145,3 +149,48 @@ def test_interior_only_yield_uses_explicit_capex_and_presents_no_bid() -> None:
     )
     direct = YEAR_2_UNLEVERED_NOI / (PURCHASE_PRICE + issued.capex)
     assert issued.year_2_unlevered_yield_on_cost == direct
+
+
+def test_synthetic_roof_is_an_explicit_assumption() -> None:
+    roof = SYNTHETIC_DEFERRED_ROOF
+    assert roof["assumption_kind"] == "synthetic_assumption"
+    assert roof["extracted_fact"] is False
+    assert roof["item"] == "roof_full_replacement"
+    assert roof["quantity"] == 100
+    assert "property" not in roof
+    source = inspect.getsource(synthetic_roof_capex)
+    assert "unit_count" not in source
+    assert "SYNTHETIC_INTERIOR_UNIT_COUNTS" not in source
+    loaded = deferred_costmodel_root() / "src" / "plat_costmodel" / "deferred_estimator.py"
+    primary = (primary_checkout_root().parent / "plat-costmodel").resolve()
+    assert loaded.is_file()
+    assert primary not in loaded.resolve().parents
+
+
+def test_interior_plus_synthetic_roof_adds_roof_capex_and_presents_no_bid() -> None:
+    issued = interior_plus_synthetic_roof_yield()
+    interior_total, _per_unit = interior_capex(
+        SYNTHETIC_INTERIOR_SCOPE,
+        unit_counts=SYNTHETIC_INTERIOR_UNIT_COUNTS,
+    )
+    roof = synthetic_roof_capex()
+
+    assert roof == Decimal("400000.0")
+    assert issued.roof_capex == roof
+    assert issued.interior_capex == interior_total
+    assert issued.capex == interior_total + roof
+    assert issued.label == "interior plus this synthetic roof"
+    assert issued.bid is None
+    assert issued.withheld is True
+
+    try:
+        from plat_harness.underwriting_direction import year_2_unlevered_yield_on_cost
+    except ImportError:
+        assert issued.year_2_unlevered_yield_on_cost is None
+        return
+
+    assert issued.year_2_unlevered_yield_on_cost == year_2_unlevered_yield_on_cost(
+        YEAR_2_UNLEVERED_NOI,
+        PURCHASE_PRICE,
+        issued.capex,
+    )
