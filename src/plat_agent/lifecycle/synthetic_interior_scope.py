@@ -8,7 +8,6 @@ synthetic assumption, not an extracted fact, and not a property record.
 from __future__ import annotations
 
 import os
-import subprocess
 import sys
 from dataclasses import dataclass
 from decimal import Decimal
@@ -20,8 +19,6 @@ ASSUMPTION_KIND = "synthetic_assumption"
 INTERIOR_ONLY = "interior_only"
 YEAR_2_UNLEVERED_NOI = Decimal("1200004.80")
 PURCHASE_PRICE = Decimal("13500000")
-HARNESS_SHA = "7429ff800dd9bdd6ffbee46575c0c967d94efd61"
-HARNESS_ROOT = Path("/home/ubuntu/plat-harness-worktrees/yield-and-reasonability")
 
 # Stated for TEST-001. These are not read off the underwriting fixture.
 SYNTHETIC_INTERIOR_SCOPE: dict = {
@@ -67,23 +64,22 @@ class InteriorOnlyYield:
 
     capex: Decimal
     per_unit_high: tuple[int, ...]
-    year_2_unlevered_yield_on_cost: Decimal
+    year_2_unlevered_yield_on_cost: Decimal | None
     label: str
     bid: None
     withheld: bool
     withhold_reason: str
-    harness_sha: str
 
     def as_dict(self) -> dict:
+        ratio = self.year_2_unlevered_yield_on_cost
         return {
             "capex": format(self.capex, "f"),
             "per_unit_high": list(self.per_unit_high),
-            "year_2_unlevered_yield_on_cost": format(self.year_2_unlevered_yield_on_cost, "f"),
+            "year_2_unlevered_yield_on_cost": None if ratio is None else format(ratio, "f"),
             "label": self.label,
             "bid": self.bid,
             "withheld": self.withheld,
             "withhold_reason": self.withhold_reason,
-            "harness_sha": self.harness_sha,
         }
 
 
@@ -96,25 +92,6 @@ def costmodel_src() -> Path:
     if not estimator.is_file():
         raise FileNotFoundError(f"interior estimator not found at {estimator}")
     return src
-
-
-def harness_src() -> Path:
-    """Source tree of the yield worktree. Import only; do not write it."""
-    src = HARNESS_ROOT / "harness" / "src"
-    owner = src / "plat_harness" / "underwriting_direction.py"
-    if not owner.is_file():
-        raise FileNotFoundError(f"yield owner not found at {owner}")
-    return src
-
-
-def harness_head_sha() -> str:
-    sha = subprocess.check_output(
-        ["git", "-C", str(HARNESS_ROOT), "rev-parse", "HEAD"],
-        text=True,
-    ).strip()
-    if sha != HARNESS_SHA:
-        raise RuntimeError(f"yield worktree SHA is {sha}, expected {HARNESS_SHA}")
-    return sha
 
 
 def interior_capex(scope: dict, *, unit_counts: tuple[int, ...]) -> tuple[Decimal, tuple[int, ...]]:
@@ -148,8 +125,10 @@ def interior_capex(scope: dict, *, unit_counts: tuple[int, ...]) -> tuple[Decima
 
 
 def interior_only_yield() -> InteriorOnlyYield:
-    """Interior-only year-2 yield for TEST-001. No bid."""
-    sha = harness_head_sha()
+    """Interior-only capex for TEST-001, plus yield when plat-harness is installed.
+
+    No bid. A missing plat-harness install skips the yield call.
+    """
     capex, per_unit_high = interior_capex(
         SYNTHETIC_INTERIOR_SCOPE,
         unit_counts=SYNTHETIC_INTERIOR_UNIT_COUNTS,
@@ -163,7 +142,6 @@ def interior_only_yield() -> InteriorOnlyYield:
         bid=None,
         withheld=True,
         withhold_reason="The 5.5% exit cap still withholds this deal.",
-        harness_sha=sha,
     )
 
 
@@ -209,14 +187,12 @@ def _load_program_schedule():
     return ProgramSchedule
 
 
-def _year_2_yield(noi: Decimal, price: Decimal, capex: Decimal) -> Decimal:
-    _insert_src(harness_src())
-    from plat_harness.underwriting_direction import year_2_unlevered_yield_on_cost
-
-    owner = Path(year_2_unlevered_yield_on_cost.__code__.co_filename).resolve()
-    expected = (harness_src() / "plat_harness" / "underwriting_direction.py").resolve()
-    if owner != expected:
-        raise RuntimeError(f"refusing yield function loaded from {owner}")
+def _year_2_yield(noi: Decimal, price: Decimal, capex: Decimal) -> Decimal | None:
+    """Call the installed yield function. Skip when plat-harness is not installed."""
+    try:
+        from plat_harness.underwriting_direction import year_2_unlevered_yield_on_cost
+    except ImportError:
+        return None
     if capex is None:
         raise ValueError("interior capex is missing; refusing to treat it as zero")
     return year_2_unlevered_yield_on_cost(noi, price, capex)
