@@ -49,6 +49,66 @@ COMP_FINDER_TIMEOUT_SECONDS = 300  # 5 min — steady-state comp refreshes shoul
 COMP_FINDER_BOOTSTRAP_TIMEOUT_SECONDS = 900  # 15 min — first-time market-study onboarding can legitimately take 5-15 min
 
 
+# Historical folder name, then the public checkout name used on this machine.
+UNDERWRITING_CHECKOUT_NAMES = (
+    "multifamily-underwriting",
+    "plat-multifamily-underwriting",
+)
+
+
+def _plat_agent_root() -> Path:
+    """plat-agent repo root (the directory that contains ``src/``)."""
+    return Path(__file__).resolve().parents[3]
+
+
+def primary_checkout_root(repo_root: Path | None = None) -> Path:
+    """Primary plat-agent checkout that owns ``repo_root``.
+
+    A linked worktree's ``.git`` is a file whose ``gitdir:`` line points at
+    ``<primary>/.git/worktrees/<name>``. Sibling repos live next to that
+    primary checkout, not next to the worktree directory.
+    """
+    root = (repo_root or _plat_agent_root()).resolve()
+    git_meta = root / ".git"
+    if git_meta.is_file():
+        line = git_meta.read_text(encoding="utf-8").strip()
+        if line.startswith("gitdir:"):
+            gitdir = Path(line.split(":", 1)[1].strip())
+            if not gitdir.is_absolute():
+                gitdir = (root / gitdir).resolve()
+            else:
+                gitdir = gitdir.resolve()
+            if gitdir.parent.name == "worktrees" and gitdir.parent.parent.name == ".git":
+                return gitdir.parent.parent.parent.resolve()
+    return root
+
+
+def underwriting_checkout(projects_dir: Path | None = None) -> Path:
+    """Resolve the sibling underwriting checkout that contains ``engine/``.
+
+    ``PLAT_MULTIFAMILY_UNDERWRITING_PATH`` wins. Otherwise prefer an existing
+    ``multifamily-underwriting`` directory, then ``plat-multifamily-underwriting``.
+    When neither tree has an ``engine/`` directory, return the historical path
+    so missing-checkout errors keep the old name.
+    """
+    raw = os.environ.get("PLAT_MULTIFAMILY_UNDERWRITING_PATH")
+    if raw:
+        return Path(raw).expanduser().resolve()
+
+    if projects_dir is None:
+        projects_dir = primary_checkout_root().parent
+    else:
+        projects_dir = Path(projects_dir).expanduser().resolve()
+
+    historical = (projects_dir / UNDERWRITING_CHECKOUT_NAMES[0]).resolve()
+    public_name = (projects_dir / UNDERWRITING_CHECKOUT_NAMES[1]).resolve()
+    if (historical / "engine").is_dir():
+        return historical
+    if (public_name / "engine").is_dir():
+        return public_name
+    return historical
+
+
 @dataclass(frozen=True)
 class SiblingRepo:
     """Where a sibling repo lives on disk and what its dispatch entrypoint is."""
@@ -62,13 +122,19 @@ class SiblingRepo:
 
         Env var convention: `PLAT_<NAME>_PATH` (uppercase, hyphens to
         underscores) — e.g. `PLAT_MARKET_STUDY_AGENT_PATH`.
+
+        The underwriting sibling also accepts the public checkout name
+        ``plat-multifamily-underwriting`` when ``multifamily-underwriting``
+        is not on disk. See ``underwriting_checkout``.
         """
         env_key = f"PLAT_{name.upper().replace('-', '_')}_PATH"
         raw = os.environ.get(env_key)
         if raw:
             return cls(name=name, path=Path(raw).expanduser().resolve())
+        if name == "multifamily-underwriting":
+            return cls(name=name, path=underwriting_checkout())
         # Default: ../{repo_name} relative to plat-agent's own location.
-        plat_agent_root = Path(__file__).resolve().parents[3]
+        plat_agent_root = _plat_agent_root()
         return cls(name=name, path=(plat_agent_root.parent / default_relative).resolve())
 
 

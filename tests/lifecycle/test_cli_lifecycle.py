@@ -209,6 +209,33 @@ def test_lifecycle_cli_defaults_to_sibling_mfu_root(tmp_path: Path, monkeypatch:
     assert kwargs["project_root"] == mfu_root.resolve()
 
 
+def test_lifecycle_cli_uses_plat_prefixed_underwriting_checkout(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from plat_agent.lifecycle.cli import lifecycle_cmd
+    from plat_agent.lifecycle.runner import LifecycleResult
+
+    monkeypatch.delenv("PLAT_MULTIFAMILY_UNDERWRITING_PATH", raising=False)
+    monkeypatch.delenv("PLAT_LIFECYCLE_PROJECT_ROOT", raising=False)
+    runner = CliRunner()
+    fake_result = LifecycleResult(
+        deal_slug="d", run_id="run_001", status="memo_ready", exit_code=0,
+    )
+    plat_root = tmp_path / "plat-agent"
+    mfu_root = tmp_path / "plat-multifamily-underwriting"
+    plat_root.mkdir()
+    (mfu_root / "engine").mkdir(parents=True)
+    monkeypatch.chdir(plat_root)
+
+    with patch("plat_agent.lifecycle.cli.run_lifecycle",
+               return_value=fake_result) as m:
+        result = runner.invoke(lifecycle_cmd, [str(_data_room(tmp_path))])
+
+    assert result.exit_code == 0
+    _args, kwargs = m.call_args
+    assert kwargs["project_root"] == mfu_root.resolve()
+
+
 def test_lifecycle_cli_passes_raw_millage_without_prompting(tmp_path: Path) -> None:
     from plat_agent.lifecycle.cli import lifecycle_cmd
     from plat_agent.lifecycle.runner import LifecycleResult
