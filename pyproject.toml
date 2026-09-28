@@ -34,6 +34,9 @@ plat = "plat_agent.cli:cli"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+"plat_agent.lifecycle" = ["fixtures/*.json"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"

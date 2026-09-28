@@ -8,21 +8,23 @@ synthetic assumption, not an extracted fact, and not a property record.
 from __future__ import annotations
 
 import importlib.util
+import json
 import os
 import subprocess
 import sys
 from dataclasses import dataclass
 from decimal import Decimal
+from importlib.resources import files
 from pathlib import Path
 
-from plat_agent.dispatch.sibling import primary_checkout_root
+from plat_agent.dispatch.sibling import primary_checkout_root, underwriting_checkout
 
 ASSUMPTION_KIND = "synthetic_assumption"
 INTERIOR_ONLY = "interior_only"
 INTERIOR_PLUS_SYNTHETIC_ROOF = "interior plus this synthetic roof"
-YEAR_2_UNLEVERED_NOI = Decimal("1200004.80")
 PURCHASE_PRICE = Decimal("13500000")
 DEFERRED_COSTMODEL_SHA = "518142ecb8771e52fcc9985237fe1a6f97a76168"
+UNDERWRITING_SHA = "0d106d601e6ae989d6942b424f8cd9b7b1173576"
 
 # Stated for TEST-001. These are not read off the underwriting fixture.
 SYNTHETIC_INTERIOR_SCOPE: dict = {
@@ -82,6 +84,7 @@ class InteriorOnlyYield:
 
     capex: Decimal
     per_unit_high: tuple[int, ...]
+    year_2_unlevered_noi: Decimal
     year_2_unlevered_yield_on_cost: Decimal | None
     label: str
     bid: None
@@ -93,6 +96,7 @@ class InteriorOnlyYield:
         return {
             "capex": format(self.capex, "f"),
             "per_unit_high": list(self.per_unit_high),
+            "year_2_unlevered_noi": format(self.year_2_unlevered_noi, "f"),
             "year_2_unlevered_yield_on_cost": None if ratio is None else format(ratio, "f"),
             "label": self.label,
             "bid": self.bid,
@@ -108,6 +112,7 @@ class InteriorPlusRoofYield:
     interior_capex: Decimal
     roof_capex: Decimal
     capex: Decimal
+    year_2_unlevered_noi: Decimal
     year_2_unlevered_yield_on_cost: Decimal | None
     label: str
     bid: None
@@ -120,6 +125,7 @@ class InteriorPlusRoofYield:
             "interior_capex": format(self.interior_capex, "f"),
             "roof_capex": format(self.roof_capex, "f"),
             "capex": format(self.capex, "f"),
+            "year_2_unlevered_noi": format(self.year_2_unlevered_noi, "f"),
             "year_2_unlevered_yield_on_cost": None if ratio is None else format(ratio, "f"),
             "label": self.label,
             "bid": self.bid,
@@ -178,10 +184,12 @@ def interior_only_yield() -> InteriorOnlyYield:
         SYNTHETIC_INTERIOR_SCOPE,
         unit_counts=SYNTHETIC_INTERIOR_UNIT_COUNTS,
     )
-    ratio = _year_2_yield(YEAR_2_UNLEVERED_NOI, PURCHASE_PRICE, capex)
+    year_2_noi = _test001_year_2_noi()
+    ratio = _year_2_yield(year_2_noi, PURCHASE_PRICE, capex)
     return InteriorOnlyYield(
         capex=capex,
         per_unit_high=per_unit_high,
+        year_2_unlevered_noi=year_2_noi,
         year_2_unlevered_yield_on_cost=ratio,
         label=INTERIOR_ONLY,
         bid=None,
@@ -250,16 +258,87 @@ def interior_plus_synthetic_roof_yield() -> InteriorPlusRoofYield:
     )
     roof = synthetic_roof_capex()
     capex = interior_total + roof
+    year_2_noi = _test001_year_2_noi()
     return InteriorPlusRoofYield(
         interior_capex=interior_total,
         roof_capex=roof,
         capex=capex,
-        year_2_unlevered_yield_on_cost=_year_2_yield(YEAR_2_UNLEVERED_NOI, PURCHASE_PRICE, capex),
+        year_2_unlevered_noi=year_2_noi,
+        year_2_unlevered_yield_on_cost=_year_2_yield(year_2_noi, PURCHASE_PRICE, capex),
         label=INTERIOR_PLUS_SYNTHETIC_ROOF,
         bid=None,
         withheld=True,
         withhold_reason="The 5.5% exit cap still withholds this deal.",
     )
+
+
+def load_test001_underwriting_metrics() -> dict:
+    """Run the pinned public underwriting engine on its saved TEST-001 inputs.
+
+    A sibling checkout at the exact reviewed SHA is required. Running it in a
+    child interpreter prevents a previously imported engine from another
+    checkout from silently supplying the numerator.
+    """
+    root = underwriting_checkout()
+    if not (root / "engine" / "engine.py").is_file():
+        raise FileNotFoundError(f"underwriting engine not found at {root}")
+    sha = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
+    if sha != UNDERWRITING_SHA:
+        raise RuntimeError(f"underwriting SHA is {sha}, expected {UNDERWRITING_SHA}")
+    fixture = files("plat_agent.lifecycle").joinpath("fixtures/test001_underwriting_inputs.json")
+    script = (
+        "import json, sys; "
+        "from engine.engine import run_underwriting; "
+        "result = run_underwriting(json.load(sys.stdin)); "
+        "print(json.dumps(result['metrics']))"
+    )
+    env = {key: value for key, value in os.environ.items() if key != "PYTHONPATH"}
+    completed = subprocess.run(
+        [sys.executable, "-c", script],
+        input=fixture.read_text(encoding="utf-8"),
+        text=True,
+        capture_output=True,
+        cwd=root,
+        env=env,
+        check=True,
+    )
+    return json.loads(completed.stdout)
+
+
+def _test001_year_2_noi() -> Decimal:
+    value = load_test001_underwriting_metrics()["noi"]["year_2_unlevered_noi"]
+    if value is None:
+        raise ValueError("underwriting engine did not return year_2_unlevered_noi")
+    return Decimal(str(value))
+
+
+def record_test001_thesis():
+    """Record a new thesis from this engine run; never rewrite the old snapshot."""
+    from plat_harness.original_thesis import record_original_thesis
+    from plat_harness.reasonability import present_underwriting
+
+    metrics = load_test001_underwriting_metrics()
+    issued = present_underwriting(
+        {
+            "purchase_price": PURCHASE_PRICE,
+            "going_in_cap_rate": metrics["yields"]["going_in_cap_rate"],
+            "exit_cap_rate": metrics["yields"]["exit_cap_rate"],
+            "price_per_unit": PURCHASE_PRICE / Decimal(100),
+            "units": 100,
+            "minimum_dscr": metrics["dscr"]["minimum_dscr"],
+            "year_1_noi": metrics["noi"]["year_1_noi"],
+        }
+    )
+    capex = interior_capex(SYNTHETIC_INTERIOR_SCOPE, unit_counts=SYNTHETIC_INTERIOR_UNIT_COUNTS)[0]
+    capex += synthetic_roof_capex()
+    record = record_original_thesis(
+        "TEST-001",
+        purchase_price=PURCHASE_PRICE,
+        year_2_unlevered_noi=Decimal(str(metrics["noi"]["year_2_unlevered_noi"])),
+        capex=capex,
+        present_as_bid=issued["present_as_bid"],
+    )
+    return issued, record
 
 
 def _require_scope(scope: dict) -> None:

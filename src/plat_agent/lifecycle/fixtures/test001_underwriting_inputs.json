@@ -1,0 +1,203 @@
+{
+  "collection_loss_curve": [
+    {
+      "applies_to": "ALL",
+      "end_period": "2031-06",
+      "loss_rate": 0.01,
+      "start_period": "2026-07"
+    }
+  ],
+  "debt_terms": {
+    "amort_years": 30,
+    "commitment": 8775000.0,
+    "io_months": 12,
+    "rate": 0.0575
+  },
+  "exit_assumptions": {
+    "exit_cap_rate": 0.055,
+    "exit_month": "2031-06",
+    "sale_cost_percent": 0.02
+  },
+  "fund_assumptions": {
+    "acquisition_fee_pct": 0.01,
+    "annual_partnership_expenses": 25000,
+    "asset_management_fee_pct": 0.01,
+    "disposition_fee_pct": 0.01,
+    "lp_equity_pct": 0.95,
+    "partnership_closing_costs": 50000,
+    "preferred_return": 0.08,
+    "promote_splits": [
+      {
+        "gp_share": 0.0,
+        "hurdle_irr": 0.08,
+        "lp_share": 1.0,
+        "tier": "Pref"
+      },
+      {
+        "gp_share": 0.3,
+        "hurdle_irr": 0.0,
+        "lp_share": 0.7,
+        "tier": "Promote"
+      }
+    ],
+    "sponsor_equity_pct": 0.05
+  },
+  "growth_assumptions": {
+    "annual_growth_rate": 0.03,
+    "growth_type": "annual_compound"
+  },
+  "loss_to_lease": [
+    {
+      "cohort_id": "1BR",
+      "end_period": "2031-06",
+      "ltl_percent": 0.03,
+      "start_period": "2026-07"
+    },
+    {
+      "cohort_id": "2BR",
+      "end_period": "2031-06",
+      "ltl_percent": 0.03,
+      "start_period": "2026-07"
+    }
+  ],
+  "market_rent_curve": [
+    {
+      "cohort_id": "1BR",
+      "end_period": "2031-06",
+      "market_rent": 1250,
+      "start_period": "2026-07"
+    },
+    {
+      "cohort_id": "2BR",
+      "end_period": "2031-06",
+      "market_rent": 1550,
+      "start_period": "2026-07"
+    }
+  ],
+  "metadata": {
+    "analyst": "Test Analyst",
+    "as_of_date": "2026-04-16",
+    "deal_id": "TEST-001",
+    "property_summary": {
+      "property_tax_policy": {
+        "analyst_override": false,
+        "assessment_ratio": 1.0,
+        "millage_rate_mills": 25.0,
+        "source": "analyst",
+        "source_locator": "tests:minimum_deal_inputs"
+      }
+    },
+    "purpose": "Unit test fixture",
+    "run_id": "test-run-001"
+  },
+  "opex_table": [
+    {
+      "base_value": 337500,
+      "calculation_type": "fixed_annual",
+      "category_name": "Real Estate Taxes",
+      "growth_rate": 0.02,
+      "recoverable_flag": false
+    },
+    {
+      "base_value": 60000,
+      "calculation_type": "fixed_annual",
+      "category_name": "Insurance",
+      "growth_rate": 0.03,
+      "recoverable_flag": false
+    },
+    {
+      "base_value": 750,
+      "calculation_type": "per_unit",
+      "category_name": "R&M",
+      "growth_rate": 0.03,
+      "recoverable_flag": false
+    },
+    {
+      "base_value": 0.04,
+      "calculation_type": "percent_egr",
+      "category_name": "Management Fee",
+      "growth_rate": 0.0,
+      "recoverable_flag": false
+    },
+    {
+      "base_value": 85,
+      "calculation_type": "per_unit_monthly",
+      "category_name": "Utilities",
+      "growth_rate": 0.03,
+      "recoverable_flag": true
+    }
+  ],
+  "physical_vacancy_curve": [
+    {
+      "cohort_id": "1BR",
+      "end_period": "2031-06",
+      "start_period": "2026-07",
+      "vacancy_rate": 0.05
+    },
+    {
+      "cohort_id": "2BR",
+      "end_period": "2031-06",
+      "start_period": "2026-07",
+      "vacancy_rate": 0.05
+    }
+  ],
+  "program_adoption_curve": [
+    {
+      "adoption_rate": 0.9,
+      "end_period": "2031-06",
+      "program_id": "RUBS",
+      "start_period": "2026-07"
+    }
+  ],
+  "purchase_assumptions": {
+    "closing_costs": 150000,
+    "equity_contribution": 4725000.0,
+    "purchase_price": 13500000,
+    "total_equity_basis": 4875000.0
+  },
+  "replacement_reserves": [
+    {
+      "annual_amount": 25000,
+      "end_period": "2031-06",
+      "start_period": "2026-07"
+    }
+  ],
+  "revenue_programs": [
+    {
+      "eligible_units": "ALL",
+      "price_value": 50,
+      "pricing_type": "$/unit",
+      "program_id": "RUBS",
+      "program_name": "RUBS Utility Recovery",
+      "program_type": "recovery",
+      "start_period": "2026-07"
+    }
+  ],
+  "schema_version": "0.1",
+  "time_grid": {
+    "analysis_end_date": "2031-06",
+    "analysis_start_date": "2026-07"
+  },
+  "unit_cohorts": [
+    {
+      "cohort_id": "1BR",
+      "initial_inplace_rent": 1200,
+      "unit_count": 50,
+      "unit_type": "1BR"
+    },
+    {
+      "cohort_id": "2BR",
+      "initial_inplace_rent": 1500,
+      "unit_count": 50,
+      "unit_type": "2BR"
+    }
+  ],
+  "utility_recovery_rules": [
+    {
+      "lag_months": 0,
+      "recovery_basis": "percent_of_expense",
+      "recovery_rate": 1.0,
+      "utility_category": "ALL"
+    }
+  ]
+}
