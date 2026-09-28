@@ -504,6 +504,10 @@ def _do_successful_run(tmp_path: Path) -> LifecycleState:
     with patch("plat_agent.lifecycle.steps.comps.dispatch_sibling_agent") as mock_dispatch:
         def _fake_dispatch(repo, request, **kwargs):
             _seed_comps_artifact(tmp_path, "comps_ok.json")
+            comps_file = tmp_path / "comps" / "comps.json"
+            payload = json.loads(comps_file.read_text())
+            payload["as_of"] = datetime.now(timezone.utc).date().isoformat()
+            comps_file.write_text(json.dumps(payload))
             return _ok_envelope(request.deal_slug, request.run_id)
         mock_dispatch.side_effect = _fake_dispatch
         step.run(state, tmp_path)

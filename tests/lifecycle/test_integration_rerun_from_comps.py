@@ -11,6 +11,7 @@ from plat_agent.lifecycle.cache import write_provenance
 from plat_agent.lifecycle.complete_marker import write_complete_marker
 from plat_agent.lifecycle.protocol import StepResult
 from plat_agent.lifecycle.runner import run_lifecycle
+from tests.lifecycle.verified_underwriting import write_verified_underwriting
 
 
 @pytest.fixture
@@ -39,10 +40,17 @@ def _writing_step(name: str, payload_supplier):
         atomic_write_json(d / f"{name}.json" if name != "memo" else d / "memo.md",
                           payload) if name != "memo" else \
             atomic_write_text(d / "memo.md", payload)
-        write_provenance(d, input_hash="x", status="ok")
+        if name == "underwriting":
+            atomic_write_json(d / "deal_summary.json", payload)
+            write_verified_underwriting(run_dir)
+        else:
+            write_provenance(d, input_hash="x", status="ok")
         write_complete_marker(d, step=name,
-                             file_manifest=[f"{name}.json" if name != "memo" else "memo.md",
-                                            "_provenance.json"])
+                             file_manifest=(["underwriting.json", "deal_summary.json",
+                                             "inputs.json", "_response_envelope.json",
+                                             "_provenance.json"] if name == "underwriting"
+                                            else [f"{name}.json" if name != "memo" else "memo.md",
+                                                  "_provenance.json"]))
         return StepResult(status="ok")
     m = MagicMock(); m.name = name; m.run.side_effect = run
     m.is_satisfied = MagicMock(return_value=False)

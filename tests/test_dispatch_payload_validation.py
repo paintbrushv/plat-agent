@@ -90,6 +90,9 @@ class _FakePopen:
     def communicate(self, timeout=None):
         return self._stdout_text, ""
 
+    def poll(self):
+        return self.returncode
+
     def kill(self):
         pass
 

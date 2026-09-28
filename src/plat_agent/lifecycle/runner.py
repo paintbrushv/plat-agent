@@ -504,13 +504,19 @@ def run_lifecycle(
             # Owner agents may refresh economic artifacts in place after their
             # lifecycle steps complete. Re-stamp provenance from those saved
             # artifacts without re-executing judgment or underwriting.
-            if (run_dir / "judgment" / "_provenance.json").exists():
+            if (
+                "judgment" in state.steps_completed
+                and (run_dir / "judgment" / "_provenance.json").exists()
+            ):
                 from plat_agent.lifecycle.judgment import (
                     synchronize_judgment_provenance,
                 )
 
                 synchronize_judgment_provenance(run_dir)
-            if (run_dir / "underwriting" / "_provenance.json").exists():
+            if (
+                "underwriting" in state.steps_completed
+                and (run_dir / "underwriting" / "_provenance.json").exists()
+            ):
                 from plat_agent.lifecycle.steps.underwriting import (
                     synchronize_underwriting_provenance,
                 )

@@ -13,6 +13,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from plat_agent.lifecycle.runner import run_lifecycle
+from tests.lifecycle.verified_underwriting import write_verified_underwriting
 
 FIXTURE_DR = Path(__file__).parent.parent / "fixtures" / "lifecycle" / \
              "data_rooms" / "synthetic_clean_deal"
@@ -99,9 +100,10 @@ def test_clean_run_end_to_end(data_room: Path, project_root: Path) -> None:
             },
             "sanity_flags": [],
         })
-        write_provenance(d, input_hash="x", status="ok")
+        write_verified_underwriting(run_dir)
         write_complete_marker(d, step="underwriting",
-                             file_manifest=["deal_summary.json", "_provenance.json"])
+                             file_manifest=["deal_summary.json", "inputs.json",
+                                            "_response_envelope.json", "_provenance.json"])
         return StepResult(status="ok")
 
     def memo_run(state, run_dir):
@@ -148,6 +150,7 @@ def test_clean_run_end_to_end(data_room: Path, project_root: Path) -> None:
         deal_slug="synthetic_clean_deal",
         project_root=project_root,
         steps=steps,
+        millage_rate="25.31",
     )
 
     # Pipeline reached the end

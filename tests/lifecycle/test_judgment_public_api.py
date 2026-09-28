@@ -22,9 +22,10 @@ def test_public_api_exports_resolve() -> None:
         assert hasattr(lifecycle, name), f"{name} missing from lifecycle.__all__"
 
 
-def test_full_step_produces_contract_compliant_positioning_json(tmp_path: Path) -> None:
+def test_full_step_produces_contract_compliant_positioning_json(tmp_path: Path, monkeypatch) -> None:
     """Fixture canonical_deal + comps → positioning.json passes the §2.3 schema."""
     from plat_agent.lifecycle import JudgmentStep, LifecycleState
+    monkeypatch.setattr("plat_agent.lifecycle.judgment_rules._ensure_agency_sizer", lambda: False)
 
     intake_dir = tmp_path / "intake"
     comps_dir = tmp_path / "comps"

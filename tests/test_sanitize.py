@@ -57,7 +57,9 @@ _WORD_FORBIDDEN = {
     "uplift": "company name (word-boundary)",
 }
 
-_SKIP_DIRS = {".git", ".venv", "__pycache__", ".pytest_cache", ".pytest-tmp"}
+# CI checks out pinned public dependencies here; scan this repository's
+# shipped source, not the sibling repositories' independent release trees.
+_SKIP_DIRS = {".git", ".venv", ".ci", "__pycache__", ".pytest_cache", ".pytest-tmp"}
 _TEXT_SUFFIXES = {
     ".py", ".json", ".md", ".toml", ".txt", ".yml", ".yaml", ".cfg",
     ".ini", ".csv", ".html", ".css", ".js", ".sh", ".example", ".j2", "",

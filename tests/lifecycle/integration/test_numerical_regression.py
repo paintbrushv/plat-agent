@@ -227,5 +227,5 @@ def test_passthrough_not_exposed_via_cli() -> None:
     # Click signals unknown options with exit_code != 0
     assert result.exit_code != 0
     # Stderr/output mentions the unrecognized flag
-    assert "judgment-mode" in (result.output + (result.stderr if hasattr(result, "stderr") else "")).lower() \
+    assert "judgment-mode" in result.output.lower() \
         or "no such option" in result.output.lower()

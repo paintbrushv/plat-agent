@@ -10,6 +10,27 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+      - name: Checkout pinned public underwriting
+        uses: actions/checkout@v4
+        with:
+          repository: paintbrushv/plat-multifamily-underwriting
+          ref: 0d106d601e6ae989d6942b424f8cd9b7b1173576
+          path: .ci/underwriting
+          persist-credentials: false
+      - name: Checkout pinned public costmodel
+        uses: actions/checkout@v4
+        with:
+          repository: paintbrushv/plat-costmodel
+          ref: 518142ecb8771e52fcc9985237fe1a6f97a76168
+          path: .ci/costmodel
+          persist-credentials: false
+      - name: Checkout pinned public harness
+        uses: actions/checkout@v4
+        with:
+          repository: paintbrushv/plat-harness
+          ref: 2bb441b332995d728e2e27d407dc0f70678625f2
+          path: .ci/harness
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -17,11 +38,15 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev,intake]"
+          pip install -e .ci/underwriting -e .ci/costmodel -e .ci/harness
       - name: Run mocked test suite (offline, no secrets)
         env:
           # keep the suite offline and credential-free in CI
           UNDERWRITING_AZURE_ENDPOINT: ""
           UNDERWRITING_MCP_CMD: ""
           PLAT_COSTMODEL_CMD: ""
+          PLAT_MULTIFAMILY_UNDERWRITING_PATH: ${{ github.workspace }}/.ci/underwriting
+          PLAT_COSTMODEL_PATH: ${{ github.workspace }}/.ci/costmodel
+          PLAT_COSTMODEL_DEFERRED_PATH: ${{ github.workspace }}/.ci/costmodel
         run: |
           pytest tests/ -q

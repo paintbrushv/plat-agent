@@ -16,9 +16,6 @@ These tests enforce that:
   * _resolve_cohort_id prefers explicit beds/baths over fragile regex.
 """
 
-import json
-from pathlib import Path
-
 import pytest
 
 from plat_agent.models import DealInputs, UnitMixEntry, UnitTypeResult
@@ -32,15 +29,18 @@ from plat_agent.schema_mapper import (
 # Fixtures and helpers
 # ---------------------------------------------------------------------------
 
-SAMPLE_CANONICAL = Path(
-    "/path/to/projects/multifamily-underwriting/runs/deals/"
-    "demo_at_legacy_park/outputs/run_001/value_add_base_inputs_32m.json"
-)
-
-
 def _load_legacy_park() -> dict:
-    with open(SAMPLE_CANONICAL) as f:
-        return json.load(f)
+    """Synthetic cohort shape from the collision report, with no deal file."""
+    source = [
+        {"cohort_id": cid, "sqft": sqft, "unit_count": count}
+        for cid, sqft, count, _bedrooms, _bathrooms in SAMPLE_COHORTS
+    ]
+    renovated = [
+        {"cohort_id": f"{cid}_renovated", "sqft": sqft, "unit_count": 10}
+        for cid, sqft, _count, _bedrooms, _bathrooms in SAMPLE_COHORTS
+        if cid in {"beal", "bradford", "essex"}
+    ]
+    return {"unit_cohorts": source + renovated, "renovation_programs": []}
 
 
 def _passing_result(sqft, bedrooms, bathrooms, count) -> UnitTypeResult:
@@ -88,7 +88,7 @@ SAMPLE_COHORTS = [
 # ---------------------------------------------------------------------------
 
 def test_existing_renovated_cohort_triggers_postreno_rename():
-    """Real Legacy Park canonical: 3 of 5 source cohorts already have
+    """Synthetic Legacy Park shape: 3 of 5 source cohorts already have
     ``*_renovated`` siblings. All 5 generated output_cohorts must be
     unique and must not collide with existing unit_cohorts.
 
@@ -299,8 +299,7 @@ def test_resolve_cohort_id_raises_on_ambiguous():
 # ---------------------------------------------------------------------------
 
 def test_legacy_park_e2e_no_collision():
-    pytest.skip(reason="requires a real-deal canonical sample that is not shipped in the public tree")
-    """Full pipeline: load real Legacy Park canonical, build programs for
+    """Full pipeline: use synthetic Legacy Park cohort shape, build programs for
     all 5 source cohorts, merge into the canonical, assert that the
     union of unit_cohort ids and output_cohort ids has no duplicates."""
     base = _load_legacy_park()
