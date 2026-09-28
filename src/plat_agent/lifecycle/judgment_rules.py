@@ -478,24 +478,22 @@ from plat_agent.lifecycle.defaults import (
 )
 
 
-_UNDERWRITING_PATH = os.environ.get("UNDERWRITING_ENGINE_PATH")
-if _UNDERWRITING_PATH and _UNDERWRITING_PATH not in sys.path:
-    sys.path.insert(0, _UNDERWRITING_PATH)
-
-try:
-    from engine.modules.debt import compute_agency_loan_terms as _compute_agency_loan_terms  # type: ignore
-    _AGENCY_AVAILABLE = True
-except ImportError:
-    _compute_agency_loan_terms = None
-    _AGENCY_AVAILABLE = False
+_compute_agency_loan_terms = None
+_AGENCY_AVAILABLE = False
 
 
 def _ensure_agency_sizer() -> bool:
     """Best-effort late bind so tests/resumed processes can set the env var after import."""
     global _AGENCY_AVAILABLE, _compute_agency_loan_terms
+    underwriting_path = os.environ.get("UNDERWRITING_ENGINE_PATH")
+    if not underwriting_path:
+        from plat_agent.lifecycle.versioned_adapters import UNDERWRITING_V1
+        try:
+            UNDERWRITING_V1.verify()
+        except RuntimeError:
+            return False
     if _AGENCY_AVAILABLE and _compute_agency_loan_terms is not None:
         return True
-    underwriting_path = os.environ.get("UNDERWRITING_ENGINE_PATH")
     if underwriting_path and underwriting_path not in sys.path:
         sys.path.insert(0, underwriting_path)
     try:

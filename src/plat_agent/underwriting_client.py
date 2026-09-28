@@ -18,14 +18,14 @@ MCP (lightweight, session-scoped):
 
 Direct (heavyweight):
   - run_full → complete cashflow, monthly detail, renovation tracking
-  - Imports engine.api.handle_run_deal directly (requires engine on PYTHONPATH)
+  - Imports engine.api.handle_run_deal from the reviewed installed package
 
 Configuration:
   - MCP server command: UNDERWRITING_MCP_CMD env var (default: python server.py)
   - Engine path: UNDERWRITING_ENGINE_PATH env var (default: ../multifamily-underwriting)
 
-The MCP path is always available. The direct path requires the
-multifamily-underwriting repo to be locally accessible.
+The direct path uses the installed package by default. The legacy MCP server
+path still needs a configured server source or explicit command.
 """
 
 import concurrent.futures
@@ -40,6 +40,7 @@ from pathlib import Path
 import anyio
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
+from plat_agent.lifecycle.versioned_adapters import UNDERWRITING_V1
 
 
 def _default_mcp_command() -> list[str]:
@@ -73,6 +74,7 @@ class UnderwritingClient:
 
     def __init__(self, mcp_command: list[str] | None = None, engine_path: str | None = None):
         cmd = mcp_command or _default_mcp_command()
+        self._explicit_engine_path = engine_path is not None or bool(os.environ.get("UNDERWRITING_ENGINE_PATH"))
         self._engine_path = Path(engine_path) if engine_path else _engine_path()
         self._server_params = StdioServerParameters(
             command=cmd[0],
@@ -119,8 +121,8 @@ class UnderwritingClient:
         revenue/opex/capex breakdowns, debt schedules, and renovation
         tracking. This is the heavyweight call for full deal analysis.
 
-        Requires multifamily-underwriting to be on PYTHONPATH or at
-        the configured engine_path.
+        Requires the reviewed installed underwriting package unless an
+        explicit legacy engine_path is configured.
         """
         handle_run_deal = self._import_engine_api()
         request = {
@@ -243,9 +245,12 @@ class UnderwritingClient:
             ready_event.set()
 
     def _import_engine_api(self):
-        """Lazily import handle_run_deal from the engine repo."""
-        engine_dir = str(self._engine_path)
-        if engine_dir not in sys.path:
-            sys.path.insert(0, engine_dir)
+        """Lazily import the reviewed installed engine by default."""
+        if self._explicit_engine_path:
+            engine_dir = str(self._engine_path)
+            if engine_dir not in sys.path:
+                sys.path.insert(0, engine_dir)
+        else:
+            UNDERWRITING_V1.verify()
         from engine.api import handle_run_deal
         return handle_run_deal

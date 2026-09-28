@@ -73,8 +73,8 @@ def _DEAL_INPUT_CANDIDATES(deal_id: str) -> list[Path]:  # noqa: N802 (tests mon
     """
     engine = _underwriting_engine_path()
     return [
+        Path(__file__).resolve().parent / "fixtures" / "deals" / f"{deal_id}.json",
         _REPO_ROOT / "data" / "deals" / f"{deal_id}.json",
-        _REPO_ROOT / "tests" / "fixtures" / "deals" / f"{deal_id}.json",
         engine / "runs" / "deals" / deal_id / "engine_inputs.json",
         engine / "data" / "deals" / f"{deal_id}.json",
     ]

@@ -11,19 +11,22 @@ are independent — they touch only the fields for their axis.
 """
 
 import copy
+import os
 import sys
-from pathlib import Path
 from typing import Any, Callable
 
 
-# Lazy import from the sibling underwriting engine. The engine_path is
-# configured via UnderwritingClient's env-var logic; we reuse the same
-# resolution so there's one source of truth.
+# Use the reviewed installed engine by default. An explicit path retains the
+# legacy host override until its consumers have migrated to package installs.
 def _ensure_engine_on_path() -> None:
-    from ..underwriting_client import _engine_path
-    engine_dir = str(_engine_path())
-    if engine_dir not in sys.path:
-        sys.path.insert(0, engine_dir)
+    if os.environ.get("UNDERWRITING_ENGINE_PATH"):
+        from ..underwriting_client import _engine_path
+        engine_dir = str(_engine_path())
+        if engine_dir not in sys.path:
+            sys.path.insert(0, engine_dir)
+    else:
+        from plat_agent.lifecycle.versioned_adapters import UNDERWRITING_V1
+        UNDERWRITING_V1.verify()
 
 
 def get_preset_family(family: str) -> dict:

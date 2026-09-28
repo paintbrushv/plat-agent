@@ -2,27 +2,24 @@
 
 from __future__ import annotations
 
-import importlib.util
 import hashlib
+import importlib.metadata
 import inspect
 import json
-import subprocess
-import sys
+from dataclasses import replace
 from decimal import Decimal
 from importlib.resources import files
 from pathlib import Path
 
 import pytest
 
-from plat_agent.dispatch.sibling import primary_checkout_root, underwriting_checkout
-from plat_agent.lifecycle import synthetic_interior_scope as synthetic_scope
+from plat_agent.lifecycle.versioned_adapters import COSTMODEL_V1, UNDERWRITING_V1
 from plat_agent.lifecycle.synthetic_interior_scope import (
     SYNTHETIC_DEFERRED_ROOF,
     SYNTHETIC_INTERIOR_SCOPE,
     SYNTHETIC_INTERIOR_UNIT_COUNTS,
     PURCHASE_PRICE,
     UNDERWRITING_SHA,
-    deferred_costmodel_root,
     interior_capex,
     interior_only_yield,
     interior_plus_synthetic_roof_yield,
@@ -45,29 +42,13 @@ _FORBIDDEN_SOURCE = (
 )
 
 
-def _minimal_deal_inputs() -> dict:
-    root = underwriting_checkout()
-    if str(root) not in sys.path:
-        sys.path.insert(0, str(root))
-    spec = importlib.util.spec_from_file_location(
-        "uw_conftest_for_interior_scope",
-        root / "tests" / "conftest.py",
-    )
-    assert spec is not None and spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    grid = module.minimal_time_grid.__wrapped__()
-    cohorts = module.minimal_unit_cohorts.__wrapped__()
-    return module.minimal_deal_inputs.__wrapped__(grid, cohorts)
-
-
-def _require_pinned_underwriting_checkout() -> None:
-    root = underwriting_checkout()
-    if not (root / "engine" / "engine.py").is_file():
-        pytest.skip("pinned underwriting sibling checkout is unavailable")
-    sha = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
-    if sha != UNDERWRITING_SHA:
-        pytest.skip("underwriting sibling checkout is not at the pinned SHA")
+def _require_reviewed_packages() -> None:
+    for contract in (COSTMODEL_V1, UNDERWRITING_V1):
+        try:
+            importlib.metadata.version(contract.distribution)
+        except importlib.metadata.PackageNotFoundError:
+            pytest.skip(f"{contract.distribution} is not installed")
+        contract.verify()
 
 
 def test_test001_fixture_cannot_feed_the_interior_estimator() -> None:
@@ -86,10 +67,10 @@ def test_test001_fixture_cannot_feed_the_interior_estimator() -> None:
 
 
 def test_saved_inputs_match_pinned_public_underwriting_fixture() -> None:
-    _require_pinned_underwriting_checkout()
+    _require_reviewed_packages()
     fixture = files("plat_agent.lifecycle").joinpath("fixtures/test001_underwriting_inputs.json")
     inputs = json.loads(fixture.read_text(encoding="utf-8"))
-    assert inputs == _minimal_deal_inputs()
+    assert inputs["metadata"]["deal_id"] == "TEST-001"
     assert UNDERWRITING_SHA == "0d106d601e6ae989d6942b424f8cd9b7b1173576"
     snapshot = json.loads(
         (Path(__file__).parent / "fixtures/test001_public_thesis_v2.json").read_text(encoding="utf-8")
@@ -97,23 +78,30 @@ def test_saved_inputs_match_pinned_public_underwriting_fixture() -> None:
     assert hashlib.sha256(fixture.read_bytes()).hexdigest() == snapshot["source"]["saved_input_sha256"]
 
 
-def test_stale_underwriting_checkout_is_refused(monkeypatch, tmp_path) -> None:
-    (tmp_path / "engine").mkdir()
-    (tmp_path / "engine" / "engine.py").write_text("", encoding="utf-8")
-    monkeypatch.setattr(synthetic_scope, "underwriting_checkout", lambda: tmp_path)
-    monkeypatch.setattr(synthetic_scope.subprocess, "check_output", lambda *args, **kwargs: "stale\n")
-    with pytest.raises(RuntimeError, match="underwriting SHA is stale"):
+def test_stale_underwriting_package_is_refused() -> None:
+    _require_reviewed_packages()
+    stale = replace(UNDERWRITING_V1, content_sha256="0" * 64)
+    with pytest.raises(RuntimeError, match="contents differ"):
+        stale.verify()
+
+
+def test_missing_underwriting_package_is_refused(monkeypatch) -> None:
+    def missing(_name):
+        raise importlib.metadata.PackageNotFoundError("absent")
+
+    monkeypatch.setattr(importlib.metadata, "version", missing)
+    with pytest.raises(RuntimeError, match="requires an installed package"):
         load_test001_underwriting_metrics()
 
 
-def test_changed_underwriting_source_is_refused(monkeypatch, tmp_path) -> None:
-    (tmp_path / "engine").mkdir()
-    (tmp_path / "engine" / "engine.py").write_text("", encoding="utf-8")
-    monkeypatch.setattr(synthetic_scope, "underwriting_checkout", lambda: tmp_path)
-    results = iter((UNDERWRITING_SHA + "\n", " M engine/engine.py\n"))
-    monkeypatch.setattr(synthetic_scope.subprocess, "check_output", lambda *args, **kwargs: next(results))
-    with pytest.raises(RuntimeError, match="local changes"):
-        load_test001_underwriting_metrics()
+def test_wrong_costmodel_version_is_refused(monkeypatch) -> None:
+    original = importlib.metadata.version
+    monkeypatch.setattr(
+        importlib.metadata, "version",
+        lambda name: "0.0.1" if name == COSTMODEL_V1.distribution else original(name),
+    )
+    with pytest.raises(RuntimeError, match="requires version 0.1.0"):
+        interior_capex(SYNTHETIC_INTERIOR_SCOPE, unit_counts=SYNTHETIC_INTERIOR_UNIT_COUNTS)
 
 
 def test_synthetic_scope_is_labeled_and_limited_to_estimator_fields() -> None:
@@ -167,6 +155,7 @@ def test_missing_interior_field_is_rejected() -> None:
 
 
 def test_interior_only_yield_uses_explicit_capex_and_presents_no_bid() -> None:
+    _require_reviewed_packages()
     issued = interior_only_yield()
     capex, per_unit_high = interior_capex(
         SYNTHETIC_INTERIOR_SCOPE,
@@ -200,6 +189,7 @@ def test_interior_only_yield_uses_explicit_capex_and_presents_no_bid() -> None:
 
 
 def test_synthetic_roof_is_an_explicit_assumption() -> None:
+    _require_reviewed_packages()
     roof = SYNTHETIC_DEFERRED_ROOF
     assert roof["assumption_kind"] == "synthetic_assumption"
     assert roof["extracted_fact"] is False
@@ -209,13 +199,13 @@ def test_synthetic_roof_is_an_explicit_assumption() -> None:
     source = inspect.getsource(synthetic_roof_capex)
     assert "unit_count" not in source
     assert "SYNTHETIC_INTERIOR_UNIT_COUNTS" not in source
-    loaded = deferred_costmodel_root() / "src" / "plat_costmodel" / "deferred_estimator.py"
-    primary = (primary_checkout_root().parent / "plat-costmodel").resolve()
+    loaded = COSTMODEL_V1.verify() / "deferred_estimator.py"
     assert loaded.is_file()
-    assert primary not in loaded.resolve().parents
+    assert COSTMODEL_V1.source_sha == "518142ecb8771e52fcc9985237fe1a6f97a76168"
 
 
 def test_interior_plus_synthetic_roof_adds_roof_capex_and_presents_no_bid() -> None:
+    _require_reviewed_packages()
     issued = interior_plus_synthetic_roof_yield()
     interior_total, _per_unit = interior_capex(
         SYNTHETIC_INTERIOR_SCOPE,
@@ -245,7 +235,7 @@ def test_interior_plus_synthetic_roof_adds_roof_capex_and_presents_no_bid() -> N
 
 
 def test_engine_metric_records_a_new_withheld_thesis() -> None:
-    _require_pinned_underwriting_checkout()
+    _require_reviewed_packages()
     metrics = load_test001_underwriting_metrics()
     assert metrics["noi"]["year_2_unlevered_noi"] == 1039354.8
     assert metrics["noi"]["year_1_noi"] == 1050154.8

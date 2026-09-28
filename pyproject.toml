@@ -10,7 +10,7 @@ requires-python = ">=3.11"
 dependencies = [
     "click>=8.0",
     "pydantic>=2.0",
-    "mcp>=1.0",
+    "mcp>=1.23,<2",
     "anyio>=4.0",
     "httpx",
     "claude-agent-sdk>=0.1.68",
@@ -36,6 +36,7 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 "plat_agent.lifecycle" = ["fixtures/*.json"]
+"plat_agent.orchestrator" = ["fixtures/deals/*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -8,6 +8,7 @@ from plat_agent.costmodel_client import (
     PLAT_COSTMODEL_PATH_ENV,
     _costmodel_path,
     _default_server_command,
+    _REVIEWED_SERVER_BOOTSTRAP,
 )
 
 
@@ -31,7 +32,7 @@ def test_default_command_uses_sys_executable_when_venv_absent(monkeypatch, tmp_p
     monkeypatch.delenv(PLAT_COSTMODEL_CMD_ENV, raising=False)
     monkeypatch.setenv(PLAT_COSTMODEL_PATH_ENV, str(tmp_path / "missing-costmodel"))
     cmd = _default_server_command()
-    assert cmd == [sys.executable, "-m", "plat_costmodel.server"]
+    assert cmd == [sys.executable, "-I", "-c", _REVIEWED_SERVER_BOOTSTRAP]
 
 
 def test_env_override_wins(monkeypatch):
@@ -42,8 +43,8 @@ def test_env_override_wins(monkeypatch):
     assert cmd == ["/some/venv/bin/python", "-m", "plat_costmodel.server"]
 
 
-def test_default_command_prefers_sibling_venv_when_present(tmp_path, monkeypatch):
-    """When ../plat-costmodel/.venv/bin/python exists, use it instead of sys.executable."""
+def test_default_command_ignores_sibling_venv_when_present(tmp_path, monkeypatch):
+    """A source checkout must not change the reviewed installed server command."""
     fake_costmodel = tmp_path / "plat-costmodel"
     fake_venv_python = fake_costmodel / ".venv" / "bin" / "python"
     fake_venv_python.parent.mkdir(parents=True)
@@ -52,8 +53,7 @@ def test_default_command_prefers_sibling_venv_when_present(tmp_path, monkeypatch
     monkeypatch.setenv(PLAT_COSTMODEL_PATH_ENV, str(fake_costmodel))
     monkeypatch.delenv(PLAT_COSTMODEL_CMD_ENV, raising=False)
     cmd = _default_server_command()
-    assert cmd[0] == str(fake_venv_python)
-    assert cmd[1:] == ["-m", "plat_costmodel.server"]
+    assert cmd == [sys.executable, "-I", "-c", _REVIEWED_SERVER_BOOTSTRAP]
 
 
 def test_default_command_falls_back_to_sys_executable_when_venv_absent(tmp_path, monkeypatch):
@@ -63,7 +63,7 @@ def test_default_command_falls_back_to_sys_executable_when_venv_absent(tmp_path,
     monkeypatch.delenv(PLAT_COSTMODEL_CMD_ENV, raising=False)
     cmd = _default_server_command()
     assert cmd[0] == sys.executable
-    assert cmd[1:] == ["-m", "plat_costmodel.server"]
+    assert cmd[1:] == ["-I", "-c", _REVIEWED_SERVER_BOOTSTRAP]
 
 
 def test_PLAT_COSTMODEL_CMD_still_takes_precedence(tmp_path, monkeypatch):
@@ -77,12 +77,12 @@ def test_PLAT_COSTMODEL_CMD_still_takes_precedence(tmp_path, monkeypatch):
     assert cmd[0] == "/explicit/python"
 
 
-def test_costmodel_path_default_is_sibling_directory():
-    """When no env var is set, default to ../plat-costmodel sibling."""
+def test_costmodel_path_default_is_unset():
+    """No implicit sibling checkout or working directory is selected."""
     saved = os.environ.pop(PLAT_COSTMODEL_PATH_ENV, None)
     try:
         path = _costmodel_path()
-        assert path.name == "plat-costmodel"
+        assert path is None
     finally:
         if saved is not None:
             os.environ[PLAT_COSTMODEL_PATH_ENV] = saved
