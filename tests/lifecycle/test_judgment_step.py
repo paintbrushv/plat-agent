@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -283,3 +284,54 @@ def test_step_run_synthesizes_house_base_case_when_price_missing(
 
     prov = json.loads((tmp_path / "judgment" / "_provenance.json").read_text())
     assert prov["house_base_case_applied"] is True
+
+
+def test_house_base_case_uses_pinned_installed_solver_without_sibling_checkout(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    run_dir = tmp_path / "outputs" / "run_001"
+    calls = []
+
+    def fake_run(command, **kwargs):
+        calls.append((command, kwargs))
+        output_dir = Path(command[command.index("--output-dir") + 1])
+        (output_dir / "canonical_backsolved_target_coc.json").write_text(
+            json.dumps({"purchase_assumptions": {"purchase_price": 20_000_000}})
+        )
+        return SimpleNamespace(returncode=0, stderr="", stdout="")
+
+    monkeypatch.setattr(judgment_module.subprocess, "run", fake_run)
+    result, provenance, blocker = judgment_module._maybe_synthesize_house_base_case(
+        state=LifecycleState(deal_slug="d", run_id="run_001"),
+        run_dir=run_dir,
+        engine_inputs={"metadata": {}},
+    )
+    assert result["purchase_assumptions"]["purchase_price"] == 20_000_000
+    assert provenance["house_base_case_applied"] is True
+    assert blocker is None
+    command, kwargs = calls.pop()
+    assert command[:4] == [judgment_module.sys.executable, "-I", "-m", "engine.backsolve"]
+    assert "cwd" not in kwargs
+    assert not calls
+
+
+def test_house_base_case_refuses_stale_solver_before_writing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    class StaleAdapter:
+        def verify(self):
+            raise RuntimeError("reviewed source differs")
+
+    monkeypatch.setattr(judgment_module, "UNDERWRITING_V2", StaleAdapter())
+
+    def unexpected_run(*args, **kwargs):
+        raise AssertionError("stale producer must not be invoked")
+
+    monkeypatch.setattr(judgment_module.subprocess, "run", unexpected_run)
+    with pytest.raises(RuntimeError, match="reviewed source differs"):
+        judgment_module._maybe_synthesize_house_base_case(
+            state=LifecycleState(deal_slug="d", run_id="run_001"),
+            run_dir=tmp_path / "outputs" / "run_001",
+            engine_inputs={"metadata": {}},
+        )
+    assert not (tmp_path / "outputs").exists()

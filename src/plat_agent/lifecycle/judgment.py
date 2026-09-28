@@ -371,13 +371,13 @@ import traceback
 from collections import Counter
 from pathlib import Path
 
-from plat_agent.dispatch.sibling import SiblingRepo
 from plat_agent.lifecycle.atomic import atomic_write_json, atomic_write_text
 from plat_agent.lifecycle.cache import compute_input_hash, is_satisfied as _cache_is_satisfied
 from plat_agent.lifecycle.cache import write_provenance
 from plat_agent.lifecycle.complete_marker import write_complete_marker
 from plat_agent.lifecycle.protocol import StepResult
 from plat_agent.lifecycle.state import LifecycleState
+from plat_agent.lifecycle.versioned_adapters import UNDERWRITING_V2
 
 
 JUDGMENT_FILE_MANIFEST = [
@@ -387,7 +387,6 @@ JUDGMENT_FILE_MANIFEST = [
     "_provenance.json",
 ]
 
-MFU_SIBLING_NAME = "multifamily-underwriting"
 DEFAULT_BENCHMARK_5YR_TREASURY = "0.04"
 DEFAULT_HOUSE_STRATEGY = "cashflow"
 
@@ -603,13 +602,9 @@ def _maybe_synthesize_house_base_case(
     if not _needs_house_base_case(engine_inputs):
         return engine_inputs, {"house_base_case_applied": False}, None
 
-    repo = SiblingRepo.from_env_or_default(
-        MFU_SIBLING_NAME,
-        default_relative=MFU_SIBLING_NAME,
-    )
-    script_path = repo.path / "runs" / "backsolve_price_for_target_coc.py"
-    if not script_path.exists():
-        raise FileNotFoundError(f"house base-case solver missing at {script_path}")
+    # The reviewed solver is packaged as engine.backsolve in underwriting
+    # 0.1.1. Check its complete installed content before starting the child.
+    UNDERWRITING_V2.verify()
 
     step_dir = run_dir / "judgment"
     pricing_dir = step_dir / "pricing_policy"
@@ -622,10 +617,11 @@ def _maybe_synthesize_house_base_case(
     year_built = _solver_year_built_from_engine_inputs(engine_inputs)
     property_summary = metadata.get("property_summary") or {}
     broker_snapshot = property_summary.get("broker_underwriting_snapshot")
-    python_bin = repo.path / ".venv" / "bin" / "python"
     command = [
-        str(python_bin if python_bin.exists() else Path(sys.executable)),
-        str(script_path),
+        sys.executable,
+        "-I",
+        "-m",
+        "engine.backsolve",
         "--canonical-json",
         str(seed_path),
         "--output-dir",
@@ -647,7 +643,6 @@ def _maybe_synthesize_house_base_case(
 
     completed = subprocess.run(
         command,
-        cwd=str(repo.path),
         capture_output=True,
         text=True,
     )
