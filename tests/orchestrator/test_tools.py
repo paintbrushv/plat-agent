@@ -388,6 +388,51 @@ def test_load_deal_inputs_strips_whitespace_in_deal_id():
     assert result.get("is_error") is True
 
 
+def test_load_deal_inputs_refuses_path_traversal():
+    result = _run(load_deal_inputs_tool.handler({"deal_id": "../../secrets"}))
+    assert result.get("is_error") is True
+    assert "safe deal slug" in result["content"][0]["text"]
+
+
+def test_default_deal_candidates_need_no_underwriting_source_checkout(monkeypatch):
+    from plat_agent.orchestrator import tools as tools_mod
+
+    monkeypatch.delenv("PLAT_DEALS_ROOT", raising=False)
+    monkeypatch.setenv("UNDERWRITING_ENGINE_PATH", "/unreviewed/source")
+    candidates = tools_mod._DEAL_INPUT_CANDIDATES("TEST-001")
+    assert len(candidates) == 1
+    assert "/unreviewed/source" not in str(candidates[0])
+
+
+def test_configured_deal_root_never_falls_back_to_synthetic_fixture(monkeypatch, tmp_path):
+    from plat_agent.orchestrator import tools as tools_mod
+
+    root = tmp_path / "deals"
+    root.mkdir()
+    monkeypatch.setenv("PLAT_DEALS_ROOT", str(root))
+    candidates = tools_mod._DEAL_INPUT_CANDIDATES("TEST-001")
+    assert candidates == [
+        root / "TEST-001" / "engine_inputs.json",
+        root / "TEST-001" / "standardized" / "canonical_deal.json",
+    ]
+    result = _run(load_deal_inputs_tool.handler({"deal_id": "TEST-001"}))
+    assert result.get("is_error") is True
+    assert "no canonical deal JSON" in result["content"][0]["text"]
+
+
+def test_configured_data_root_refuses_escaping_symlink(monkeypatch, tmp_path):
+    root = tmp_path / "deals"
+    root.mkdir()
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    (outside / "engine_inputs.json").write_text('{"secret":true}')
+    (root / "DEAL").symlink_to(outside, target_is_directory=True)
+    monkeypatch.setenv("PLAT_DEALS_ROOT", str(root))
+    result = _run(load_deal_inputs_tool.handler({"deal_id": "DEAL"}))
+    assert result.get("is_error") is True
+    assert "escapes its data root" in result["content"][0]["text"]
+
+
 def test_load_deal_inputs_returns_canonical_payload(monkeypatch, tmp_path):
     """When a candidate path exists, the tool reads it, JSON-decodes it,
     and returns `{"path": ..., "inputs": <decoded>}` as the text payload."""

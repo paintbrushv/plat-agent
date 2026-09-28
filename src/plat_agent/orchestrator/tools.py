@@ -10,6 +10,7 @@ import asyncio
 import functools
 import json
 import os
+import re
 from pathlib import Path
 from typing import Any
 
@@ -49,18 +50,10 @@ def _underwriting_client() -> UnderwritingClient:
     return UnderwritingClient()
 
 
-# Repo root = parent of `src/plat_agent/orchestrator/tools.py` walked up 3 levels.
-_REPO_ROOT = Path(__file__).resolve().parents[3]
-
-
-def _underwriting_engine_path() -> Path:
-    """Resolve the multifamily-underwriting engine path the same way
-    UnderwritingClient does, so canonical-deal lookups under the engine's
-    `runs/deals/` tree work without env juggling."""
-    env_path = os.environ.get("UNDERWRITING_ENGINE_PATH")
-    if env_path:
-        return Path(env_path)
-    return _REPO_ROOT.parent / "multifamily-underwriting"
+def _configured_deals_root() -> Path | None:
+    """Deal data is a host-owned path, independent of producer source code."""
+    raw = os.environ.get("PLAT_DEALS_ROOT")
+    return Path(raw).expanduser().resolve() if raw else None
 
 
 def _DEAL_INPUT_CANDIDATES(deal_id: str) -> list[Path]:  # noqa: N802 (tests monkeypatch this name)
@@ -71,13 +64,13 @@ def _DEAL_INPUT_CANDIDATES(deal_id: str) -> list[Path]:  # noqa: N802 (tests mon
     and the search starts from a deterministic root regardless of the agent's
     cwd. Tests monkeypatch this symbol on the module to inject fixtures.
     """
-    engine = _underwriting_engine_path()
-    return [
-        Path(__file__).resolve().parent / "fixtures" / "deals" / f"{deal_id}.json",
-        _REPO_ROOT / "data" / "deals" / f"{deal_id}.json",
-        engine / "runs" / "deals" / deal_id / "engine_inputs.json",
-        engine / "data" / "deals" / f"{deal_id}.json",
-    ]
+    root = _configured_deals_root()
+    if root is not None:
+        return [
+            root / deal_id / "engine_inputs.json",
+            root / deal_id / "standardized" / "canonical_deal.json",
+        ]
+    return [Path(__file__).resolve().parent / "fixtures" / "deals" / f"{deal_id}.json"]
 
 
 # ---------------------------------------------------------------------------
@@ -230,11 +223,16 @@ async def load_deal_inputs_tool(args: dict[str, Any]) -> dict[str, Any]:
     deal_id = (args.get("deal_id") or "").strip()
     if not deal_id:
         return _fail("FAIL: deal_id required")
+    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}", deal_id):
+        return _fail("FAIL: deal_id must be a single safe deal slug")
 
     candidates = _DEAL_INPUT_CANDIDATES(deal_id)
+    root = _configured_deals_root()
     for path in candidates:
         if not path.exists():
             continue
+        if root is not None and root in path.parents and not path.resolve().is_relative_to(root):
+            return _fail("FAIL load_deal_inputs: configured deal path escapes its data root")
         try:
             inputs = json.loads(path.read_text())
         except json.JSONDecodeError as exc:

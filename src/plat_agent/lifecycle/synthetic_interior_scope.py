@@ -15,14 +15,14 @@ from dataclasses import dataclass
 from decimal import Decimal
 from importlib.resources import files
 
-from plat_agent.lifecycle.versioned_adapters import COSTMODEL_V1, UNDERWRITING_V1
+from plat_agent.lifecycle.versioned_adapters import COSTMODEL_V1, UNDERWRITING_V2
 
 ASSUMPTION_KIND = "synthetic_assumption"
 INTERIOR_ONLY = "interior_only"
 INTERIOR_PLUS_SYNTHETIC_ROOF = "interior plus this synthetic roof"
 PURCHASE_PRICE = Decimal("13500000")
 DEFERRED_COSTMODEL_SHA = COSTMODEL_V1.source_sha
-UNDERWRITING_SHA = UNDERWRITING_V1.source_sha
+UNDERWRITING_SHA = UNDERWRITING_V2.source_sha
 
 # Stated for TEST-001. These are not read off the underwriting fixture.
 SYNTHETIC_INTERIOR_SCOPE: dict = {
@@ -240,12 +240,12 @@ def load_test001_underwriting_metrics() -> dict:
     The reviewed distribution is checked before use. A child interpreter
     prevents a previously imported engine from supplying the numerator.
     """
-    UNDERWRITING_V1.verify()
+    UNDERWRITING_V2.verify()
     fixture = files("plat_agent.lifecycle").joinpath("fixtures/test001_underwriting_inputs.json")
     script = (
         "import json, sys; "
-        "from plat_agent.lifecycle.versioned_adapters import UNDERWRITING_V1; "
-        "UNDERWRITING_V1.verify(); "
+        "from plat_agent.lifecycle.versioned_adapters import UNDERWRITING_V2; "
+        "UNDERWRITING_V2.verify(); "
         "from engine.engine import run_underwriting; "
         "result = run_underwriting(json.load(sys.stdin)); "
         "print(json.dumps(result['metrics']))"

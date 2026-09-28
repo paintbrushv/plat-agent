@@ -25,8 +25,8 @@ def _ensure_engine_on_path() -> None:
         if engine_dir not in sys.path:
             sys.path.insert(0, engine_dir)
     else:
-        from plat_agent.lifecycle.versioned_adapters import UNDERWRITING_V1
-        UNDERWRITING_V1.verify()
+        from plat_agent.lifecycle.versioned_adapters import UNDERWRITING_V2
+        UNDERWRITING_V2.verify()
 
 
 def get_preset_family(family: str) -> dict:
