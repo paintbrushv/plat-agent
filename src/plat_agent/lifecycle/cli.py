@@ -8,17 +8,10 @@ from pathlib import Path
 
 import click
 
-from plat_agent.dispatch.sibling import primary_checkout_root, underwriting_checkout
 from plat_agent.lifecycle.runner import run_lifecycle
 
 
 _VALID_STEPS = ["intake", "comps", "judgment", "underwriting", "memo", "crm"]
-
-
-def _cwd_is_plat_agent_checkout(cwd: Path) -> bool:
-    return (cwd / "src" / "plat_agent" / "lifecycle").is_dir() and (
-        cwd / "pyproject.toml"
-    ).is_file()
 
 
 def _resolve_project_root(project_root: Path | None) -> Path | None:
@@ -27,11 +20,11 @@ def _resolve_project_root(project_root: Path | None) -> Path | None:
     Preference order:
     1. Explicit ``--project-root``.
     2. ``PLAT_LIFECYCLE_PROJECT_ROOT`` env var.
-    3. If running from a plat-agent checkout, the sibling underwriting tree
-       whose ``engine/`` directory exists. ``multifamily-underwriting`` wins
-       when present; otherwise ``plat-multifamily-underwriting``. A linked
-       worktree looks beside the primary checkout.
-    4. Otherwise let ``run_lifecycle()`` fall back to ``Path.cwd()``.
+    3. Otherwise let ``run_lifecycle()`` use the current working directory.
+
+    Never infer an artifact location from a sibling source checkout. An
+    installed lifecycle may use an explicitly configured private project
+    root without having any sibling repository on disk.
     """
     if project_root is not None:
         return project_root
@@ -40,17 +33,6 @@ def _resolve_project_root(project_root: Path | None) -> Path | None:
     if env_root:
         return Path(env_root).expanduser().resolve()
 
-    cwd = Path.cwd().resolve()
-    if cwd.name == "plat-agent":
-        projects_dir = cwd.parent
-    elif _cwd_is_plat_agent_checkout(cwd):
-        projects_dir = primary_checkout_root(cwd).parent
-    else:
-        return None
-
-    checkout = underwriting_checkout(projects_dir=projects_dir)
-    if (checkout / "engine").is_dir():
-        return checkout
     return None
 
 
@@ -78,11 +60,8 @@ def _resolve_project_root(project_root: Path | None) -> Path | None:
 @click.option("--project-root", "project_root", default=None,
               type=click.Path(file_okay=False, path_type=Path),
               envvar="PLAT_LIFECYCLE_PROJECT_ROOT",
-              help="Override the lifecycle run root. Defaults to the sibling "
-                   "underwriting checkout (`multifamily-underwriting`, or "
-                   "`plat-multifamily-underwriting` when that is the tree "
-                   "with an engine/) when invoked from a plat-agent checkout. "
-                   "Otherwise falls back to the current working directory.")
+              help="Set the lifecycle run root. Defaults to the current "
+                   "working directory; no sibling source checkout is selected.")
 def lifecycle_cmd(data_room: Path,
                   resume_spec: str | None,
                   rerun_from: str | None,
