@@ -24,6 +24,13 @@ jobs:
           ref: 518142ecb8771e52fcc9985237fe1a6f97a76168
           path: .ci/costmodel
           persist-credentials: false
+      - name: Checkout pinned public harness
+        uses: actions/checkout@v4
+        with:
+          repository: paintbrushv/plat-harness
+          ref: 2bb441b332995d728e2e27d407dc0f70678625f2
+          path: .ci/harness
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -31,7 +38,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev,intake]"
-          pip install -e .ci/underwriting -e .ci/costmodel
+          pip install -e .ci/underwriting -e .ci/costmodel -e .ci/harness
       - name: Run mocked test suite (offline, no secrets)
         env:
           # keep the suite offline and credential-free in CI
