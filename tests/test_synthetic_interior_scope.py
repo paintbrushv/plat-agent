@@ -71,7 +71,8 @@ def _require_pinned_underwriting_checkout() -> None:
 
 
 def test_test001_fixture_cannot_feed_the_interior_estimator() -> None:
-    deal = _minimal_deal_inputs()
+    fixture = files("plat_agent.lifecycle").joinpath("fixtures/test001_underwriting_inputs.json")
+    deal = json.loads(fixture.read_text(encoding="utf-8"))
     assert deal["metadata"]["deal_id"] == "TEST-001"
     assert "property" not in deal
     assert "renovation_programs" not in deal
