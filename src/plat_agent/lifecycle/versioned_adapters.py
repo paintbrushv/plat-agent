@@ -1,4 +1,4 @@
-"""Reviewed, installed package adapters for the public TEST-001 workflow.
+"""Reviewed, installed package adapters for the public V3 integration.
 
 The package digest is over the installed Python and packaged data files.  A
 distribution's 0.1.0 label alone cannot distinguish the reviewed commit from

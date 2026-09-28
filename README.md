@@ -37,7 +37,7 @@ plat analyze --deal-file tests/fixtures/sample_hills_deal.json
 plat check-inputs --deal-file deal.json
 ```
 
-The TEST-001 synthetic workflow checks the installed costmodel and underwriting distributions against adapter contract v1 (package version and complete packaged content digest). It does not resolve sibling source paths. This adapter's only consumer is `synthetic_interior_scope`; retire the content pins after both producers publish distinct package versions with a stable, tested adapter contract. Other federated dispatch flows still use configured sibling repositories; see *Environment variables* below.
+The installed costmodel and underwriting distributions are checked against adapter contract v1 (package version and complete packaged content digest) before TEST-001 calculations, the default costmodel MCP server, and direct underwriting/scenario/agency calls. These paths do not resolve sibling source checkouts. Retire the content pins after both producers publish distinct package versions with a stable, tested adapter contract. Federated prompt dispatch and the underwriting MCP server still use configured sibling or host services; see *Environment variables* below.
 
 ## Environment variables
 
