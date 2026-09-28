@@ -275,7 +275,7 @@ def interior_plus_synthetic_roof_yield() -> InteriorPlusRoofYield:
 def load_test001_underwriting_metrics() -> dict:
     """Run the pinned public underwriting engine on its saved TEST-001 inputs.
 
-    A sibling checkout at the exact reviewed SHA is required. Running it in a
+    A clean sibling checkout at the exact reviewed SHA is required. Running it in a
     child interpreter prevents a previously imported engine from another
     checkout from silently supplying the numerator.
     """
@@ -285,6 +285,12 @@ def load_test001_underwriting_metrics() -> dict:
     sha = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
     if sha != UNDERWRITING_SHA:
         raise RuntimeError(f"underwriting SHA is {sha}, expected {UNDERWRITING_SHA}")
+    changed_source = subprocess.check_output(
+        ["git", "-C", str(root), "status", "--porcelain", "--untracked-files=all", "--", "engine", "tests/conftest.py"],
+        text=True,
+    ).strip()
+    if changed_source:
+        raise RuntimeError("underwriting engine or TEST-001 source fixture has local changes")
     fixture = files("plat_agent.lifecycle").joinpath("fixtures/test001_underwriting_inputs.json")
     script = (
         "import json, sys; "
@@ -301,6 +307,7 @@ def load_test001_underwriting_metrics() -> dict:
         cwd=root,
         env=env,
         check=True,
+        timeout=60,
     )
     return json.loads(completed.stdout)
 

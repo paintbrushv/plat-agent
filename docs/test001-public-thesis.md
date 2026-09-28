@@ -7,6 +7,7 @@ records a distinct run from public underwriting `0d106d6` and costmodel
 `518142e`. Its saved engine inputs are bundled in
 `src/plat_agent/lifecycle/fixtures/test001_underwriting_inputs.json` and
 tested for exact parity with the public underwriting test fixture.
+The runtime refuses a modified engine or fixture source tree at that SHA.
 
 The engine now returns year-2 unlevered NOI **1,039,354.80**. With purchase
 price 13,500,000 and explicitly priced interior plus roof capex 1,758,150,

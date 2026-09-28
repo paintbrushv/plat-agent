@@ -6,6 +6,7 @@ import importlib.util
 import hashlib
 import inspect
 import json
+import subprocess
 import sys
 from decimal import Decimal
 from importlib.resources import files
@@ -60,6 +61,15 @@ def _minimal_deal_inputs() -> dict:
     return module.minimal_deal_inputs.__wrapped__(grid, cohorts)
 
 
+def _require_pinned_underwriting_checkout() -> None:
+    root = underwriting_checkout()
+    if not (root / "engine" / "engine.py").is_file():
+        pytest.skip("pinned underwriting sibling checkout is unavailable")
+    sha = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
+    if sha != UNDERWRITING_SHA:
+        pytest.skip("underwriting sibling checkout is not at the pinned SHA")
+
+
 def test_test001_fixture_cannot_feed_the_interior_estimator() -> None:
     deal = _minimal_deal_inputs()
     assert deal["metadata"]["deal_id"] == "TEST-001"
@@ -75,6 +85,7 @@ def test_test001_fixture_cannot_feed_the_interior_estimator() -> None:
 
 
 def test_saved_inputs_match_pinned_public_underwriting_fixture() -> None:
+    _require_pinned_underwriting_checkout()
     fixture = files("plat_agent.lifecycle").joinpath("fixtures/test001_underwriting_inputs.json")
     inputs = json.loads(fixture.read_text(encoding="utf-8"))
     assert inputs == _minimal_deal_inputs()
@@ -85,9 +96,22 @@ def test_saved_inputs_match_pinned_public_underwriting_fixture() -> None:
     assert hashlib.sha256(fixture.read_bytes()).hexdigest() == snapshot["source"]["saved_input_sha256"]
 
 
-def test_stale_underwriting_checkout_is_refused(monkeypatch) -> None:
+def test_stale_underwriting_checkout_is_refused(monkeypatch, tmp_path) -> None:
+    (tmp_path / "engine").mkdir()
+    (tmp_path / "engine" / "engine.py").write_text("", encoding="utf-8")
+    monkeypatch.setattr(synthetic_scope, "underwriting_checkout", lambda: tmp_path)
     monkeypatch.setattr(synthetic_scope.subprocess, "check_output", lambda *args, **kwargs: "stale\n")
     with pytest.raises(RuntimeError, match="underwriting SHA is stale"):
+        load_test001_underwriting_metrics()
+
+
+def test_changed_underwriting_source_is_refused(monkeypatch, tmp_path) -> None:
+    (tmp_path / "engine").mkdir()
+    (tmp_path / "engine" / "engine.py").write_text("", encoding="utf-8")
+    monkeypatch.setattr(synthetic_scope, "underwriting_checkout", lambda: tmp_path)
+    results = iter((UNDERWRITING_SHA + "\n", " M engine/engine.py\n"))
+    monkeypatch.setattr(synthetic_scope.subprocess, "check_output", lambda *args, **kwargs: next(results))
+    with pytest.raises(RuntimeError, match="local changes"):
         load_test001_underwriting_metrics()
 
 
@@ -220,6 +244,7 @@ def test_interior_plus_synthetic_roof_adds_roof_capex_and_presents_no_bid() -> N
 
 
 def test_engine_metric_records_a_new_withheld_thesis() -> None:
+    _require_pinned_underwriting_checkout()
     metrics = load_test001_underwriting_metrics()
     assert metrics["noi"]["year_2_unlevered_noi"] == 1039354.8
     assert metrics["noi"]["year_1_noi"] == 1050154.8
