@@ -75,3 +75,17 @@ UNDERWRITING_V1 = PackageContractV1(
     suffixes=frozenset({".py", ".json"}),
     file_count=53,
 )
+
+
+UNDERWRITING_V2 = PackageContractV1(
+    distribution="plat-multifamily-underwriting",
+    module="engine",
+    version="0.1.1",
+    source_sha="10a88ed393e6d6611c8c710b5e15ef64e128af6b",
+    content_sha256="06b73cd7a84a92ac3c7b35ad1eaca8ffd1bcc10291e23e8971cf190b95668e11",
+    suffixes=frozenset({".py", ".json"}),
+    file_count=54,
+)
+
+# The producer's first packaged MCP protocol ships in the V2 package.
+UNDERWRITING_MCP_V1 = UNDERWRITING_V2

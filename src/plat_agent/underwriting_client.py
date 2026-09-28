@@ -21,17 +21,20 @@ Direct (heavyweight):
   - Imports engine.api.handle_run_deal from the reviewed installed package
 
 Configuration:
-  - MCP server command: UNDERWRITING_MCP_CMD env var (default: python server.py)
-  - Engine path: UNDERWRITING_ENGINE_PATH env var (default: ../multifamily-underwriting)
+  - MCP server command: UNDERWRITING_MCP_CMD override, otherwise the pinned
+    installed ``engine.mcp_server`` adapter
+  - Engine path: UNDERWRITING_ENGINE_PATH is an explicit legacy direct-import
+    override; the installed MCP route needs no source checkout
 
-The direct path uses the installed package by default. The legacy MCP server
-path still needs a configured server source or explicit command.
+The default direct and MCP paths use reviewed installed packages. An explicit
+host command or engine path is outside that default package pin.
 """
 
 import concurrent.futures
 import json
 import os
 import queue
+import shlex
 import sys
 import threading
 from contextlib import AsyncExitStack
@@ -40,18 +43,17 @@ from pathlib import Path
 import anyio
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
-from plat_agent.lifecycle.versioned_adapters import UNDERWRITING_V1
+from plat_agent.lifecycle.versioned_adapters import UNDERWRITING_V2, UNDERWRITING_MCP_V1
 
 
 def _default_mcp_command() -> list[str]:
     env_cmd = os.environ.get("UNDERWRITING_MCP_CMD")
     if env_cmd:
-        return env_cmd.split()
-    # Default: use the underwriting repo's own venv python to run server.py
-    engine_path = _engine_path()
-    venv_python = engine_path / ".venv" / "bin" / "python"
-    python = str(venv_python) if venv_python.exists() else sys.executable
-    return [python, str(engine_path / "server.py")]
+        command = shlex.split(env_cmd)
+        if not command:
+            raise ValueError("UNDERWRITING_MCP_CMD cannot be empty")
+        return command
+    return [sys.executable, "-m", "engine.mcp_server"]
 
 
 def _engine_path() -> Path:
@@ -73,13 +75,16 @@ class UnderwritingClient:
     """
 
     def __init__(self, mcp_command: list[str] | None = None, engine_path: str | None = None):
+        if mcp_command is not None and not mcp_command:
+            raise ValueError("Explicit underwriting MCP command cannot be empty")
+        self._custom_mcp_command = mcp_command is not None or bool(os.environ.get("UNDERWRITING_MCP_CMD"))
         cmd = mcp_command or _default_mcp_command()
         self._explicit_engine_path = engine_path is not None or bool(os.environ.get("UNDERWRITING_ENGINE_PATH"))
         self._engine_path = Path(engine_path) if engine_path else _engine_path()
         self._server_params = StdioServerParameters(
             command=cmd[0],
             args=cmd[1:],
-            cwd=str(self._engine_path),
+            cwd=str(self._engine_path) if self._custom_mcp_command and self._explicit_engine_path else None,
         )
 
         # Worker-thread state — lazily initialized on first MCP call
@@ -156,6 +161,8 @@ class UnderwritingClient:
 
     def _submit(self, tool_name: str, arguments: dict) -> dict:
         """Submit a request to the worker thread and block until result."""
+        if not self._custom_mcp_command:
+            UNDERWRITING_MCP_V1.verify()
         self._ensure_worker()
         fut: concurrent.futures.Future = concurrent.futures.Future()
         assert self._requests is not None
@@ -234,7 +241,13 @@ class UnderwritingClient:
                             fut.set_result({"status": "error", "error": "engine returned empty response"})
                         else:
                             try:
-                                fut.set_result(json.loads(raw))
+                                parsed = json.loads(raw)
+                                if (
+                                    not self._custom_mcp_command
+                                    and parsed.get("adapter_contract") != "plat.underwriting.mcp/1"
+                                ):
+                                    raise RuntimeError("Installed underwriting MCP contract mismatch")
+                                fut.set_result(parsed)
                             except json.JSONDecodeError:
                                 # Engine returned plain-text error (e.g., validation failure)
                                 fut.set_result({"status": "error", "error": raw.strip()})
@@ -251,6 +264,6 @@ class UnderwritingClient:
             if engine_dir not in sys.path:
                 sys.path.insert(0, engine_dir)
         else:
-            UNDERWRITING_V1.verify()
+            UNDERWRITING_V2.verify()
         from engine.api import handle_run_deal
         return handle_run_deal

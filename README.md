@@ -26,8 +26,8 @@ pip install -e ".[dev,intake]"
 
 # Reviewed public TEST-001 adapters (installable wheels from exact commits).
 pip install "git+https://github.com/paintbrushv/plat-costmodel.git@518142ecb8771e52fcc9985237fe1a6f97a76168"
-pip install "git+https://github.com/paintbrushv/plat-multifamily-underwriting.git@0d106d601e6ae989d6942b424f8cd9b7b1173576"
-pip install "git+https://github.com/paintbrushv/plat-harness.git@aa7f8653090fc1e1393b72b4c155c49af44116db"
+pip install "git+https://github.com/paintbrushv/plat-multifamily-underwriting.git@10a88ed393e6d6611c8c710b5e15ef64e128af6b"
+pip install "git+https://github.com/paintbrushv/plat-harness.git@f46a94d95e1e0cf7c314dac2ac9b485b972889bd"
 
 # Mocked unit tests (no live servers required)
 pytest tests/ -q
@@ -37,7 +37,7 @@ plat analyze --deal-file tests/fixtures/sample_hills_deal.json
 plat check-inputs --deal-file deal.json
 ```
 
-The installed costmodel and underwriting distributions are checked against adapter contract v1 (package version and complete packaged content digest) before TEST-001 calculations, the default costmodel MCP server, and direct underwriting/scenario/agency calls. These paths do not resolve sibling source checkouts. Retire the content pins after both producers publish distinct package versions with a stable, tested adapter contract. Federated prompt dispatch and the underwriting MCP server still use configured sibling or host services; see *Environment variables* below.
+The installed costmodel and underwriting distributions are checked against reviewed package versions and complete packaged content digests before TEST-001 calculations, both default MCP servers, and direct underwriting/scenario/agency calls. These paths do not resolve sibling source checkouts. The current underwriting MCP adapter is `plat.underwriting.mcp/1` in producer package 0.1.1. Federated prompt dispatch still uses configured sibling or host services; see *Environment variables* below.
 
 ## Environment variables
 
@@ -46,11 +46,15 @@ The installed costmodel and underwriting distributions are checked against adapt
 # in an isolated child interpreter with MCP 1.x.
 export PLAT_COSTMODEL_CMD="/path/to/.venv/bin/python -m plat_costmodel.server"
 
-# Underwriting engine MCP server command
-export UNDERWRITING_MCP_CMD="/path/to/python /path/to/multifamily-underwriting/server.py"
+# Optional host override; the default uses the pinned installed producer
+export UNDERWRITING_MCP_CMD="/path/to/python -m engine.mcp_server"
 
 # Optional legacy path override; direct calls use the verified installed engine by default
 export UNDERWRITING_ENGINE_PATH="/path/to/multifamily-underwriting"
+
+# Optional host-owned deal data directory (contains <deal-slug>/engine_inputs.json
+# or <deal-slug>/standardized/canonical_deal.json); independent of source code
+export PLAT_DEALS_ROOT="/private/deal-data"
 
 # Azure-backed underwriting runs. When ENDPOINT is set, sweep's make_backend("auto")
 # picks AzureRunBackend; otherwise local. Use --backend local to force local.

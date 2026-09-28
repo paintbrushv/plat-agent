@@ -487,9 +487,9 @@ def _ensure_agency_sizer() -> bool:
     global _AGENCY_AVAILABLE, _compute_agency_loan_terms
     underwriting_path = os.environ.get("UNDERWRITING_ENGINE_PATH")
     if not underwriting_path:
-        from plat_agent.lifecycle.versioned_adapters import UNDERWRITING_V1
+        from plat_agent.lifecycle.versioned_adapters import UNDERWRITING_V2
         try:
-            UNDERWRITING_V1.verify()
+            UNDERWRITING_V2.verify()
         except RuntimeError:
             return False
     if _AGENCY_AVAILABLE and _compute_agency_loan_terms is not None:
