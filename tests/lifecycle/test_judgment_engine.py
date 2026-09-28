@@ -149,7 +149,8 @@ def _comps_with_signals() -> dict:
     }
 
 
-def test_evaluate_value_add_full_field_set() -> None:
+def test_evaluate_value_add_full_field_set(monkeypatch) -> None:
+    monkeypatch.setattr("plat_agent.lifecycle.judgment_rules._ensure_agency_sizer", lambda: False)
     engine = DeterministicJudgmentEngine()
     intake = _intake_value_add()
     comps = _comps_with_signals()

@@ -8,6 +8,7 @@ from plat_agent.lifecycle.crm import CRMStep, crm_path, list_deals
 from plat_agent.lifecycle.memo import MemoStep
 from plat_agent.lifecycle.protocol import StepResult
 from plat_agent.lifecycle.runner import run_lifecycle
+from tests.lifecycle.verified_underwriting import write_verified_underwriting
 
 
 def _data_room(tmp_path: Path) -> Path:
@@ -129,6 +130,7 @@ def _judgment_with_provenance(judgment_engine_value: str):
             "blockers": [],
         }))
         (jd / "thesis.md").write_text("# Thesis\n\nTest thesis.\n")
+        (jd / "engine_inputs.json").write_text("{}")
         (jd / "_provenance.json").write_text(json.dumps({
             "judgment_engine": judgment_engine_value,
             "thesis_path": str((jd / "thesis.md").resolve()),
@@ -156,6 +158,7 @@ def _uw_with_provenance():
             "feasibility_sanity_flags": [],
             "workbook_path": str((uw / "deal_workbook.xlsm").resolve()),
         }))
+        write_verified_underwriting(run_dir)
         return StepResult(status="ok")
     m = MagicMock(); m.name = "underwriting"; m.run.side_effect = run
     m.is_satisfied.return_value = False
@@ -185,6 +188,7 @@ def test_passthrough_propagates_to_state_memo_and_crm(tmp_path: Path) -> None:
         project_root=project,
         steps=steps,
         judgment_mode="passthrough",
+        millage_rate="25.31",
     )
 
     run_dir = runs_root / "d" / "outputs" / result.run_id
@@ -221,6 +225,7 @@ def test_default_mode_no_banner_no_override(tmp_path: Path) -> None:
         deal_slug="d",
         project_root=project,
         steps=steps,
+        millage_rate="25.31",
     )
 
     run_dir = runs_root / "d" / "outputs" / result.run_id

@@ -301,7 +301,10 @@ def test_dispatch_rebuilds_comp_finder_envelope_after_timeout(tmp_path: Path) ->
     )
     fake = _RecordingHangPopen(stdout_text="", stderr_lines=["still working\n"])
 
-    with patch("plat_agent.dispatch.sibling.subprocess.Popen", return_value=fake):
+    # Advance the mocked clock through the 300-second comp refresh deadline.
+    # The fake process never exits, so a real clock would stall this unit test.
+    with patch("plat_agent.dispatch.sibling.time.monotonic", side_effect=[0, 301]), \
+         patch("plat_agent.dispatch.sibling.subprocess.Popen", return_value=fake):
         with patch(
             "plat_agent.dispatch.sibling._rebuild_comp_finder_envelope_from_artifacts",
             return_value=rebuilt.model_dump(mode="json"),

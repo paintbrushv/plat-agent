@@ -82,6 +82,15 @@ def _intake_run_factory():
                 "address": "1234 Main St, Dallas, TX 75201",
                 "year_built": 2005,
                 "market": "dallas_tx",
+                "property_summary": {
+                    "property_tax_policy": {
+                        "millage_rate_mills": 25.31,
+                        "assessment_ratio": 1.0,
+                        "source": "synthetic_fixture",
+                        "source_locator": "integration:clean_deal",
+                        "analyst_override": False,
+                    }
+                },
             },
             "unit_cohorts": [{"cohort_id": "1br", "unit_count": 240}],
             "purchase_assumptions": {"purchase_price": 28_000_000},
@@ -169,6 +178,11 @@ def _underwriting_run_factory():
     def underwriting_run(state, run_dir):
         d = run_dir / "underwriting"
         d.mkdir(exist_ok=True)
+        from plat_agent.lifecycle.steps.underwriting import _compute_engine_inputs_hash
+
+        engine_inputs = json.loads((run_dir / "judgment" / "engine_inputs.json").read_text())
+        atomic_write_json(d / "inputs.json", engine_inputs)
+        atomic_write_json(d / "_response_envelope.json", {})
         atomic_write_json(d / "deal_summary.json", {
             "metrics": {
                 "irr": {"levered_irr": 0.15, "unlevered_irr": 0.105},
@@ -178,10 +192,21 @@ def _underwriting_run_factory():
             },
             "sanity_flags": [],
         })
-        write_provenance(d, input_hash="x", status="ok")
+        write_provenance(d, input_hash="x", status="ok", extra={
+            "engine_version": "0.1.0",
+            "schema_version": "0.1",
+            "inputs_hash_sha256": _compute_engine_inputs_hash(engine_inputs),
+            "generated_at_utc": "2026-07-20T00:00:00Z",
+            "validator_status": "PASS",
+            "validator_issues": [],
+            "feasibility_verdict": "marginal",
+            "feasibility_sanity_flags": [],
+            "feasibility_reasons": [],
+            "cap_rate_derivation": None,
+        })
         write_complete_marker(
             d, step="underwriting",
-            file_manifest=["deal_summary.json", "_provenance.json"],
+            file_manifest=["deal_summary.json", "inputs.json", "_provenance.json", "_response_envelope.json"],
         )
         return StepResult(status="ok")
     return underwriting_run

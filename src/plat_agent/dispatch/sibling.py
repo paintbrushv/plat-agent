@@ -435,6 +435,19 @@ def _persist_response_envelope(
             flush=True,
         )
         return None
+    try:
+        target_dir = Path(deal_root) / "outputs" / run_id / resolved_domain
+        target = target_dir / "_response_envelope.json"
+        _atomic_write_text(target, response.model_dump_json(indent=2))
+        return target
+    except Exception as exc:  # noqa: BLE001 — best-effort persistence
+        print(
+            f"[plat-agent] WARNING: failed to persist response envelope for "
+            f"{response.agent_name} -> {resolved_domain}: {exc!r}",
+            file=sys.stderr,
+            flush=True,
+        )
+        return None
 
 
 def _load_persisted_response_envelope(
@@ -597,19 +610,6 @@ def _finalize_response(
 
     _persist_response_envelope(response, request.deal_root, request.run_id)
     return response
-    try:
-        target_dir = Path(deal_root) / "outputs" / run_id / resolved_domain
-        target = target_dir / "_response_envelope.json"
-        _atomic_write_text(target, response.model_dump_json(indent=2))
-        return target
-    except Exception as exc:  # noqa: BLE001 — best-effort persistence
-        print(
-            f"[plat-agent] WARNING: failed to persist response envelope for "
-            f"{response.agent_name} -> {resolved_domain}: {exc!r}",
-            file=sys.stderr,
-            flush=True,
-        )
-        return None
 
 
 def _bridge_response_with_schema_violation(

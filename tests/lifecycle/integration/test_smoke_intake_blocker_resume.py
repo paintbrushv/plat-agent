@@ -71,6 +71,7 @@ def test_lifecycle_handles_intake_blocker_and_resumes(
         deal_slug="project_essex",
         project_root=project_root,
         steps=steps,
+        millage_rate="25.31",
     )
     assert first.status == "memo_ready_with_blockers"
     # Per §4.3 row 2 spec: intake blocker -> exit 0 (analyst-actionable)
@@ -95,6 +96,7 @@ def test_lifecycle_handles_intake_blocker_and_resumes(
         project_root=project_root,
         steps=second_steps,
         resume_run_id=first.run_id,
+        millage_rate="25.31",
     )
     assert second.status == "memo_ready"
     assert second.run_id == first.run_id  # same run

@@ -13,6 +13,7 @@ from plat_agent.lifecycle.complete_marker import write_complete_marker
 from plat_agent.lifecycle.protocol import StepResult
 from plat_agent.lifecycle.runner import run_lifecycle
 from plat_agent.lifecycle.state import BlockerItem
+from tests.lifecycle.verified_underwriting import write_verified_underwriting
 
 
 @pytest.fixture
@@ -93,9 +94,10 @@ def test_resume_after_blocker_reaches_memo_ready(data_room: Path,
         atomic_write_json(d / "deal_summary.json", {
             "metrics": {"irr": {"levered_irr": 0.15},
                         "dscr": {"minimum_dscr": 1.25}, "coc": {"cash_on_cash_year_1": 0.08}}})
-        write_provenance(d, input_hash="x", status="ok")
+        write_verified_underwriting(run_dir)
         write_complete_marker(d, step="underwriting",
-                             file_manifest=["deal_summary.json", "_provenance.json"])
+                             file_manifest=["deal_summary.json", "inputs.json",
+                                            "_response_envelope.json", "_provenance.json"])
 
     def memo_writer(run_dir):
         d = run_dir / "memo"; d.mkdir(exist_ok=True)
@@ -120,7 +122,7 @@ def test_resume_after_blocker_reaches_memo_ready(data_room: Path,
 
     # First run — intake blocks
     first = run_lifecycle(data_room, deal_slug="d", project_root=project_root,
-                         steps=steps)
+                         steps=steps, millage_rate="25.31")
     assert first.status == "memo_ready_with_blockers"
     assert first.blocker_count == 1
 
@@ -152,7 +154,8 @@ def test_resume_after_blocker_reaches_memo_ready(data_room: Path,
     steps["intake"].is_satisfied.return_value = True
 
     second = run_lifecycle(data_room, deal_slug="d", project_root=project_root,
-                          steps=steps, resume_run_id=first.run_id)
+                          steps=steps, resume_run_id=first.run_id,
+                          millage_rate="25.31")
     assert second.status == "memo_ready"
     # Punchlist now cleared
     reconciled = read_punchlist_json(run_dir)

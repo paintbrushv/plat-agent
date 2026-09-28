@@ -198,6 +198,7 @@ def test_lifecycle_cli_defaults_to_sibling_mfu_root(tmp_path: Path, monkeypatch:
     mfu_root = tmp_path / "multifamily-underwriting"
     plat_root.mkdir()
     (mfu_root / "engine").mkdir(parents=True)
+    monkeypatch.delenv("PLAT_MULTIFAMILY_UNDERWRITING_PATH", raising=False)
     monkeypatch.chdir(plat_root)
 
     with patch("plat_agent.lifecycle.cli.run_lifecycle",

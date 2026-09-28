@@ -87,7 +87,7 @@ def test_intake_blocker_continues_to_comps(
 
     result = run_lifecycle(
         missing_t12_data_room, deal_slug="d",
-        project_root=project_root, steps=steps,
+        project_root=project_root, steps=steps, millage_rate="25.31",
     )
     assert result.status == "memo_ready_with_blockers"
     # comps DID run despite intake blocker

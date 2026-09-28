@@ -385,7 +385,8 @@ from plat_agent.lifecycle.judgment_rules import compute_leverage
 import importlib
 
 
-def test_leverage_v1_returns_hardcoded_with_source_marker() -> None:
+def test_leverage_v1_returns_hardcoded_with_source_marker(monkeypatch) -> None:
+    monkeypatch.setattr("plat_agent.lifecycle.judgment_rules._ensure_agency_sizer", lambda: False)
     intake = _intake(in_place_rent=1300.0)
     lev = compute_leverage(intake)
     assert lev["ltv"] == DEFAULT_LEVERAGE_V1["ltv"]
@@ -395,7 +396,8 @@ def test_leverage_v1_returns_hardcoded_with_source_marker() -> None:
     assert lev["source"] == LEVERAGE_SOURCE_V1_HARDCODED
 
 
-def test_leverage_v1_ignores_intake_debt_section() -> None:
+def test_leverage_v1_ignores_intake_debt_section(monkeypatch) -> None:
+    monkeypatch.setattr("plat_agent.lifecycle.judgment_rules._ensure_agency_sizer", lambda: False)
     # Even if intake carries debt terms, V1 ignores them (V2 will parse them)
     intake = dict(_intake(in_place_rent=1300.0))
     intake["debt"] = {"loans": [{"ltv": 0.80, "rate": 0.06, "amort_years": 25, "io_months": 0}]}
@@ -406,10 +408,11 @@ def test_leverage_v1_ignores_intake_debt_section() -> None:
 
 def test_agency_leverage_activates_when_engine_path_set(monkeypatch) -> None:
     import plat_agent.lifecycle.judgment_rules as jr
+    import os
 
     monkeypatch.setenv(
         "UNDERWRITING_ENGINE_PATH",
-        "/path/to/projects/multifamily-underwriting",
+        os.environ["PLAT_MULTIFAMILY_UNDERWRITING_PATH"],
     )
     importlib.reload(jr)
 
