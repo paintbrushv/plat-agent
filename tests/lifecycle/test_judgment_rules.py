@@ -408,11 +408,12 @@ def test_leverage_v1_ignores_intake_debt_section(monkeypatch) -> None:
 
 def test_agency_leverage_activates_when_engine_path_set(monkeypatch) -> None:
     import plat_agent.lifecycle.judgment_rules as jr
-    import os
+    import engine
+    from pathlib import Path
 
     monkeypatch.setenv(
         "UNDERWRITING_ENGINE_PATH",
-        os.environ["PLAT_MULTIFAMILY_UNDERWRITING_PATH"],
+        str(Path(engine.__file__).resolve().parent.parent),
     )
     importlib.reload(jr)
 

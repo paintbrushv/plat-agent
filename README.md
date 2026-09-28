@@ -24,6 +24,11 @@ The output is a `DealAnalysis` containing per-unit-type results, property totals
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev,intake]"
 
+# Reviewed public TEST-001 adapters (installable wheels from exact commits).
+pip install "git+https://github.com/paintbrushv/plat-costmodel.git@518142ecb8771e52fcc9985237fe1a6f97a76168"
+pip install "git+https://github.com/paintbrushv/plat-multifamily-underwriting.git@0d106d601e6ae989d6942b424f8cd9b7b1173576"
+pip install "git+https://github.com/paintbrushv/plat-harness.git@aa7f8653090fc1e1393b72b4c155c49af44116db"
+
 # Mocked unit tests (no live servers required)
 pytest tests/ -q
 
@@ -32,18 +37,19 @@ plat analyze --deal-file tests/fixtures/sample_hills_deal.json
 plat check-inputs --deal-file deal.json
 ```
 
-Configure MCP endpoints via environment variables (see *Environment variables* below) if the sibling repos live outside the default `../<repo>` paths.
+The installed costmodel and underwriting distributions are checked against adapter contract v1 (package version and complete packaged content digest) before TEST-001 calculations, the default costmodel MCP server, and direct underwriting/scenario/agency calls. These paths do not resolve sibling source checkouts. Retire the content pins after both producers publish distinct package versions with a stable, tested adapter contract. Federated prompt dispatch and the underwriting MCP server still use configured sibling or host services; see *Environment variables* below.
 
 ## Environment variables
 
 ```bash
-# plat-costmodel MCP server command (default: python -m plat_costmodel.server)
+# Optional server override; the default uses the installed, verified package
+# in an isolated child interpreter with MCP 1.x.
 export PLAT_COSTMODEL_CMD="/path/to/.venv/bin/python -m plat_costmodel.server"
 
 # Underwriting engine MCP server command
 export UNDERWRITING_MCP_CMD="/path/to/python /path/to/multifamily-underwriting/server.py"
 
-# Underwriting engine path for direct import (default: ../multifamily-underwriting)
+# Optional legacy path override; direct calls use the verified installed engine by default
 export UNDERWRITING_ENGINE_PATH="/path/to/multifamily-underwriting"
 
 # Azure-backed underwriting runs. When ENDPOINT is set, sweep's make_backend("auto")
@@ -87,10 +93,10 @@ When `base_deal_inputs` is present, the generated `renovation_programs` are merg
 
 ## Honest limitations
 
-- **Sibling repositories are not bundled.** The federated workflow dispatches to sibling repos (`plat-costmodel`, `multifamily-underwriting`, and market-study siblings) that are separate private projects; without them, the single-process `analyze_deal()` path needs at least `plat-costmodel` via MCP. The default test suite is fully mocked and runs offline.
+- **Federated siblings are not bundled.** The federated workflow dispatches to separate cost, underwriting, and market-study repos. The reviewed cost and underwriting engines are public installable packages for TEST-001; some agent-prompt dispatch flows still need a configured sibling repo. The default mocked tests run offline.
 - **Cross-repo integration tests are opt-in.** Tests marked `integration` require explicitly configured sibling repositories and skip otherwise; tests marked `e2e_live` hit live external services and are excluded from CI.
 - **Live smoke is manual.** `tests/smoke_test_live.py` spawns real MCP subprocesses and is run manually, not by the suite.
-- **Pre-existing test failures.** At the release import baseline, 61 tests in the suite fail for environment reasons (missing sibling engine import, fake-subprocess drift in tests, lifecycle state drift) — the same set of failures is present in the upstream tree and none are introduced by the public packaging. The default suite runs green apart from these pre-existing failures; failure-set parity is the release gate, tracked in the release evidence.
+- **Versioned TEST-001 adapter.** The reviewed installed packages are required for the synthetic interior/roof/underwriting calculation. An absent package or different build refuses calculations. The package version alone is insufficient because these producers currently label multiple commits `0.1.0`; adapter v1 also checks all packaged source and data files against the reviewed commits.
 - **Validation is synthetic-only.** The lifecycle fixtures are hand-built synthetic deals; no real deal data ships with this repository.
 
 ## Sanitize gate

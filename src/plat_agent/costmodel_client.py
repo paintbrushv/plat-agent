@@ -8,13 +8,13 @@ Usage:
     result = client.call_tool("estimate_property_from_model", {"property_id": ...})
 
 Configuration:
-    By default, spawns `<plat-costmodel-venv>/bin/python -m plat_costmodel.server`
-    as a subprocess. Resolution order:
+    By default, spawns the reviewed installed plat-costmodel package with
+    the current interpreter. Resolution order:
       1. PLAT_COSTMODEL_CMD env var (full command override)
-      2. <PLAT_COSTMODEL_PATH or ../plat-costmodel sibling>/.venv/bin/python
-      3. sys.executable (assumes plat_costmodel is installed in current env)
+      2. An isolated child of sys.executable that verifies adapter v1 before
+         starting plat_costmodel.server
 
-    PLAT_COSTMODEL_PATH env var: path to plat-costmodel repo (default: ../plat-costmodel)
+    PLAT_COSTMODEL_PATH env var: optional working directory for a custom server
     PLAT_COSTMODEL_CMD env var: full command override (e.g., for custom envs)
 
     PLAT_COSTMODEL_CMD example:
@@ -29,10 +29,16 @@ from pathlib import Path
 import anyio
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
+from plat_agent.lifecycle.versioned_adapters import COSTMODEL_V1
 
 
 PLAT_COSTMODEL_PATH_ENV = "PLAT_COSTMODEL_PATH"
 PLAT_COSTMODEL_CMD_ENV = "PLAT_COSTMODEL_CMD"
+_REVIEWED_SERVER_BOOTSTRAP = (
+    "from plat_agent.lifecycle.versioned_adapters import COSTMODEL_V1; "
+    "COSTMODEL_V1.verify(); "
+    "from plat_costmodel.server import main; main()"
+)
 
 
 def _unwrap_exception_group(eg: BaseExceptionGroup) -> BaseException:
@@ -48,27 +54,20 @@ def _unwrap_exception_group(eg: BaseExceptionGroup) -> BaseException:
     return current
 
 
-def _costmodel_path() -> Path:
-    """Resolve the plat-costmodel sibling repo path."""
+def _costmodel_path() -> Path | None:
+    """Optional explicit server working directory; never infer a sibling."""
     env_path = os.environ.get(PLAT_COSTMODEL_PATH_ENV)
     if env_path:
         return Path(env_path).expanduser().resolve()
-    # Default: sibling directory next to plat-agent
-    return Path(__file__).resolve().parents[3] / "plat-costmodel"
+    return None
 
 
 def _default_server_command() -> list[str]:
-    """Build the subprocess command, preferring plat-costmodel's own .venv if present."""
+    """Launch the installed package in this interpreter by default."""
     env_cmd = os.environ.get(PLAT_COSTMODEL_CMD_ENV)
     if env_cmd:
         return env_cmd.split()
-    costmodel_path = _costmodel_path()
-    venv_python = costmodel_path / ".venv" / "bin" / "python"
-    # Prefer the sibling repo's venv (which has plat_costmodel installed).
-    # Fall back to sys.executable so we run with the same interpreter that
-    # imported us, avoiding ENOENT on macOS where bare `python` is not on PATH.
-    python = str(venv_python) if venv_python.exists() else sys.executable
-    return [python, "-m", "plat_costmodel.server"]
+    return [sys.executable, "-I", "-c", _REVIEWED_SERVER_BOOTSTRAP]
 
 
 class CostModelClient:
@@ -89,11 +88,12 @@ class CostModelClient:
             if costmodel_path
             else _costmodel_path()
         )
+        self._reviewed_default = server_command is None and not os.environ.get(PLAT_COSTMODEL_CMD_ENV)
         cmd = server_command or _default_server_command()
         self._server_params = StdioServerParameters(
             command=cmd[0],
             args=cmd[1:],
-            cwd=str(self._costmodel_path) if self._costmodel_path.exists() else None,
+            cwd=str(self._costmodel_path) if self._costmodel_path and self._costmodel_path.exists() else None,
         )
 
     def call_tool(self, tool_name: str, arguments: dict) -> dict:
@@ -101,6 +101,8 @@ class CostModelClient:
         return anyio.run(self._async_call_tool, tool_name, arguments)
 
     async def _async_call_tool(self, tool_name: str, arguments: dict) -> dict:
+        if self._reviewed_default:
+            COSTMODEL_V1.verify()
         try:
             async with stdio_client(self._server_params) as (read, write):
                 async with ClientSession(read, write) as session:

@@ -481,7 +481,7 @@ def test_load_deal_inputs_handles_invalid_json(monkeypatch, tmp_path):
 
 
 def test_load_deal_inputs_finds_test_001_fixture():
-    """End-to-end: the bundled `tests/fixtures/deals/TEST-001.json` fixture
+    """End-to-end: the packaged TEST-001 fixture
     must be discoverable by the default candidate list so the smoke test
     has a deterministic deal to load."""
     result = _run(load_deal_inputs_tool.handler({"deal_id": "TEST-001"}))

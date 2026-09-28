@@ -7,7 +7,6 @@ synthetic assumption, not an extracted fact, and not a property record.
 
 from __future__ import annotations
 
-import importlib.util
 import json
 import os
 import subprocess
@@ -15,16 +14,15 @@ import sys
 from dataclasses import dataclass
 from decimal import Decimal
 from importlib.resources import files
-from pathlib import Path
 
-from plat_agent.dispatch.sibling import primary_checkout_root, underwriting_checkout
+from plat_agent.lifecycle.versioned_adapters import COSTMODEL_V1, UNDERWRITING_V1
 
 ASSUMPTION_KIND = "synthetic_assumption"
 INTERIOR_ONLY = "interior_only"
 INTERIOR_PLUS_SYNTHETIC_ROOF = "interior plus this synthetic roof"
 PURCHASE_PRICE = Decimal("13500000")
-DEFERRED_COSTMODEL_SHA = "518142ecb8771e52fcc9985237fe1a6f97a76168"
-UNDERWRITING_SHA = "0d106d601e6ae989d6942b424f8cd9b7b1173576"
+DEFERRED_COSTMODEL_SHA = COSTMODEL_V1.source_sha
+UNDERWRITING_SHA = UNDERWRITING_V1.source_sha
 
 # Stated for TEST-001. These are not read off the underwriting fixture.
 SYNTHETIC_INTERIOR_SCOPE: dict = {
@@ -134,17 +132,6 @@ class InteriorPlusRoofYield:
         }
 
 
-def costmodel_src() -> Path:
-    """Source tree of the unmodified plat-costmodel clone."""
-    raw = os.environ.get("PLAT_COSTMODEL_PATH")
-    root = Path(raw).expanduser().resolve() if raw else primary_checkout_root().parent / "plat-costmodel"
-    src = root / "src"
-    estimator = src / "plat_costmodel" / "estimator.py"
-    if not estimator.is_file():
-        raise FileNotFoundError(f"interior estimator not found at {estimator}")
-    return src
-
-
 def interior_capex(scope: dict, *, unit_counts: tuple[int, ...]) -> tuple[Decimal, tuple[int, ...]]:
     """Call ``estimate_unit`` and sum conservative per-unit highs times counts.
 
@@ -198,30 +185,6 @@ def interior_only_yield() -> InteriorOnlyYield:
     )
 
 
-def deferred_costmodel_root() -> Path:
-    """Deferred-maintenance costmodel tree. Never the primary checkout."""
-    raw = os.environ.get("PLAT_COSTMODEL_DEFERRED_PATH")
-    if raw:
-        root = Path(raw).expanduser().resolve()
-    else:
-        root = (
-            primary_checkout_root().parent / ".worktrees" / "plat-costmodel-deferred-maintenance"
-        ).resolve()
-    primary = (primary_checkout_root().parent / "plat-costmodel").resolve()
-    if root == primary:
-        raise RuntimeError("refusing the primary costmodel checkout for deferred maintenance")
-    estimator = root / "src" / "plat_costmodel" / "deferred_estimator.py"
-    if not estimator.is_file():
-        raise FileNotFoundError(f"deferred estimator not found at {estimator}")
-    sha = subprocess.check_output(
-        ["git", "-C", str(root), "rev-parse", "HEAD"],
-        text=True,
-    ).strip()
-    if sha != DEFERRED_COSTMODEL_SHA:
-        raise RuntimeError(f"deferred costmodel SHA is {sha}, expected {DEFERRED_COSTMODEL_SHA}")
-    return root
-
-
 def synthetic_roof_capex(scope: dict | None = None) -> Decimal:
     """Price the stated roof item with ``estimate_deferred_maintenance``.
 
@@ -235,14 +198,13 @@ def synthetic_roof_capex(scope: dict | None = None) -> Decimal:
     quantity = scope["quantity"]
     if isinstance(quantity, bool) or not isinstance(quantity, int) or quantity < 1:
         raise ValueError("deferred roof quantity must be a positive integer")
-    root = deferred_costmodel_root()
-    estimate = _load_estimate_deferred_maintenance(root)
+    estimate = _load_estimate_deferred_maintenance()
     schedule = _load_program_schedule().model_validate(scope["schedule"])
     result = estimate(
         items=[item],
         quantity=quantity,
         schedule=schedule,
-        kb=_deferred_knowledge_base(root),
+        kb=_deferred_knowledge_base(),
     )
     total_high = result["total_high"]
     if total_high is None:
@@ -275,36 +237,25 @@ def interior_plus_synthetic_roof_yield() -> InteriorPlusRoofYield:
 def load_test001_underwriting_metrics() -> dict:
     """Run the pinned public underwriting engine on its saved TEST-001 inputs.
 
-    A clean sibling checkout at the exact reviewed SHA is required. Running it in a
-    child interpreter prevents a previously imported engine from another
-    checkout from silently supplying the numerator.
+    The reviewed distribution is checked before use. A child interpreter
+    prevents a previously imported engine from supplying the numerator.
     """
-    root = underwriting_checkout()
-    if not (root / "engine" / "engine.py").is_file():
-        raise FileNotFoundError(f"underwriting engine not found at {root}")
-    sha = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
-    if sha != UNDERWRITING_SHA:
-        raise RuntimeError(f"underwriting SHA is {sha}, expected {UNDERWRITING_SHA}")
-    changed_source = subprocess.check_output(
-        ["git", "-C", str(root), "status", "--porcelain", "--untracked-files=all", "--", "engine", "tests/conftest.py"],
-        text=True,
-    ).strip()
-    if changed_source:
-        raise RuntimeError("underwriting engine or TEST-001 source fixture has local changes")
+    UNDERWRITING_V1.verify()
     fixture = files("plat_agent.lifecycle").joinpath("fixtures/test001_underwriting_inputs.json")
     script = (
         "import json, sys; "
+        "from plat_agent.lifecycle.versioned_adapters import UNDERWRITING_V1; "
+        "UNDERWRITING_V1.verify(); "
         "from engine.engine import run_underwriting; "
         "result = run_underwriting(json.load(sys.stdin)); "
         "print(json.dumps(result['metrics']))"
     )
     env = {key: value for key, value in os.environ.items() if key != "PYTHONPATH"}
     completed = subprocess.run(
-        [sys.executable, "-c", script],
+        [sys.executable, "-I", "-c", script],
         input=fixture.read_text(encoding="utf-8"),
         text=True,
         capture_output=True,
-        cwd=root,
         env=env,
         check=True,
         timeout=60,
@@ -367,57 +318,31 @@ def _require_scope(scope: dict) -> None:
             raise ValueError("current_avg_rent must be a non-negative number")
 
 
-def _insert_src(src: Path) -> None:
-    entry = str(src)
-    if entry not in sys.path:
-        sys.path.insert(0, entry)
-
-
 def _load_estimate_unit():
-    _insert_src(costmodel_src())
+    COSTMODEL_V1.verify()
     from plat_costmodel.estimator import estimate_unit
-
-    estimator_path = Path(estimate_unit.__code__.co_filename).resolve()
-    if estimator_path != (costmodel_src() / "plat_costmodel" / "estimator.py").resolve():
-        raise RuntimeError(f"refusing estimator loaded from {estimator_path}")
     return estimate_unit
 
 
 def _load_program_schedule():
-    _insert_src(costmodel_src())
+    COSTMODEL_V1.verify()
     from plat_costmodel.schemas.scope import ProgramSchedule
 
     return ProgramSchedule
 
 
-def _load_estimate_deferred_maintenance(root: Path):
-    module_path = root / "src" / "plat_costmodel" / "deferred_estimator.py"
-    src = str(root / "src")
-    if "plat_costmodel" not in sys.modules and src not in sys.path:
-        sys.path.insert(0, src)
-    spec = importlib.util.spec_from_file_location(
-        "plat_costmodel_deferred_maintenance_estimator",
-        module_path,
-    )
-    if spec is None or spec.loader is None:
-        raise ImportError(f"cannot load deferred estimator from {module_path}")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    estimate = module.estimate_deferred_maintenance
-    loaded = Path(estimate.__code__.co_filename).resolve()
-    if loaded != module_path.resolve():
-        raise RuntimeError(f"refusing deferred estimator loaded from {loaded}")
-    primary = (primary_checkout_root().parent / "plat-costmodel").resolve()
-    if primary in loaded.parents:
-        raise RuntimeError(f"refusing deferred estimator from the primary checkout at {loaded}")
-    return estimate
+def _load_estimate_deferred_maintenance():
+    COSTMODEL_V1.verify()
+    from plat_costmodel.deferred_estimator import estimate_deferred_maintenance
+
+    return estimate_deferred_maintenance
 
 
-def _deferred_knowledge_base(root: Path) -> dict:
+def _deferred_knowledge_base() -> dict:
     import yaml
 
-    path = root / "src" / "plat_costmodel" / "data" / "knowledge_base.yaml"
-    with path.open(encoding="utf-8") as handle:
+    COSTMODEL_V1.verify()
+    with files("plat_costmodel").joinpath("data/knowledge_base.yaml").open(encoding="utf-8") as handle:
         return yaml.safe_load(handle)
 
 
