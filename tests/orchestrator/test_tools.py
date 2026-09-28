@@ -404,6 +404,22 @@ def test_default_deal_candidates_need_no_underwriting_source_checkout(monkeypatc
     assert "/unreviewed/source" not in str(candidates[0])
 
 
+def test_configured_deal_root_never_falls_back_to_synthetic_fixture(monkeypatch, tmp_path):
+    from plat_agent.orchestrator import tools as tools_mod
+
+    root = tmp_path / "deals"
+    root.mkdir()
+    monkeypatch.setenv("PLAT_DEALS_ROOT", str(root))
+    candidates = tools_mod._DEAL_INPUT_CANDIDATES("TEST-001")
+    assert candidates == [
+        root / "TEST-001" / "engine_inputs.json",
+        root / "TEST-001" / "standardized" / "canonical_deal.json",
+    ]
+    result = _run(load_deal_inputs_tool.handler({"deal_id": "TEST-001"}))
+    assert result.get("is_error") is True
+    assert "no canonical deal JSON" in result["content"][0]["text"]
+
+
 def test_configured_data_root_refuses_escaping_symlink(monkeypatch, tmp_path):
     root = tmp_path / "deals"
     root.mkdir()

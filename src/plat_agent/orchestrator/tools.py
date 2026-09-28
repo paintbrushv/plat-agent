@@ -64,16 +64,13 @@ def _DEAL_INPUT_CANDIDATES(deal_id: str) -> list[Path]:  # noqa: N802 (tests mon
     and the search starts from a deterministic root regardless of the agent's
     cwd. Tests monkeypatch this symbol on the module to inject fixtures.
     """
-    candidates = [
-        Path(__file__).resolve().parent / "fixtures" / "deals" / f"{deal_id}.json",
-    ]
     root = _configured_deals_root()
     if root is not None:
-        candidates.extend((
+        return [
             root / deal_id / "engine_inputs.json",
             root / deal_id / "standardized" / "canonical_deal.json",
-        ))
-    return candidates
+        ]
+    return [Path(__file__).resolve().parent / "fixtures" / "deals" / f"{deal_id}.json"]
 
 
 # ---------------------------------------------------------------------------
