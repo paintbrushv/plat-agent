@@ -15,14 +15,14 @@ from dataclasses import dataclass
 from decimal import Decimal
 from importlib.resources import files
 
-from plat_agent.lifecycle.versioned_adapters import COSTMODEL_V1, UNDERWRITING_V4
+from plat_agent.lifecycle.versioned_adapters import COSTMODEL_V2, UNDERWRITING_V5
 
 ASSUMPTION_KIND = "synthetic_assumption"
 INTERIOR_ONLY = "interior_only"
 INTERIOR_PLUS_SYNTHETIC_ROOF = "interior plus this synthetic roof"
 PURCHASE_PRICE = Decimal("13500000")
-DEFERRED_COSTMODEL_SHA = COSTMODEL_V1.source_sha
-UNDERWRITING_SHA = UNDERWRITING_V4.source_sha
+DEFERRED_COSTMODEL_SHA = COSTMODEL_V2.source_sha
+UNDERWRITING_SHA = UNDERWRITING_V5.source_sha
 
 # Stated for TEST-001. These are not read off the underwriting fixture.
 SYNTHETIC_INTERIOR_SCOPE: dict = {
@@ -240,12 +240,12 @@ def load_test001_underwriting_metrics() -> dict:
     The reviewed distribution is checked before use. A child interpreter
     prevents a previously imported engine from supplying the numerator.
     """
-    UNDERWRITING_V4.verify()
+    UNDERWRITING_V5.verify()
     fixture = files("plat_agent.lifecycle").joinpath("fixtures/test001_underwriting_inputs.json")
     script = (
         "import json, sys; "
-        "from plat_agent.lifecycle.versioned_adapters import UNDERWRITING_V4; "
-        "UNDERWRITING_V4.verify(); "
+        "from plat_agent.lifecycle.versioned_adapters import UNDERWRITING_V5; "
+        "UNDERWRITING_V5.verify(); "
         "from engine.engine import run_underwriting; "
         "result = run_underwriting(json.load(sys.stdin)); "
         "print(json.dumps(result['metrics']))"
@@ -319,20 +319,20 @@ def _require_scope(scope: dict) -> None:
 
 
 def _load_estimate_unit():
-    COSTMODEL_V1.verify()
+    COSTMODEL_V2.verify()
     from plat_costmodel.estimator import estimate_unit
     return estimate_unit
 
 
 def _load_program_schedule():
-    COSTMODEL_V1.verify()
+    COSTMODEL_V2.verify()
     from plat_costmodel.schemas.scope import ProgramSchedule
 
     return ProgramSchedule
 
 
 def _load_estimate_deferred_maintenance():
-    COSTMODEL_V1.verify()
+    COSTMODEL_V2.verify()
     from plat_costmodel.deferred_estimator import estimate_deferred_maintenance
 
     return estimate_deferred_maintenance
@@ -341,7 +341,7 @@ def _load_estimate_deferred_maintenance():
 def _deferred_knowledge_base() -> dict:
     import yaml
 
-    COSTMODEL_V1.verify()
+    COSTMODEL_V2.verify()
     with files("plat_costmodel").joinpath("data/knowledge_base.yaml").open(encoding="utf-8") as handle:
         return yaml.safe_load(handle)
 

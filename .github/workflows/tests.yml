@@ -1,6 +1,7 @@
 name: tests
 
 on:
+  workflow_call:
   push:
   pull_request:
 
@@ -13,13 +14,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - uses: astral-sh/setup-uv@v6
       - name: Install
         run: |
-          python -m pip install --upgrade pip
-          pip install -e ".[dev,intake]"
-          pip install "git+https://github.com/paintbrushv/plat-multifamily-underwriting.git@b42764be7d0bf278272ff29ce36e0c98e2c10f5f"
-          pip install "git+https://github.com/paintbrushv/plat-costmodel.git@518142ecb8771e52fcc9985237fe1a6f97a76168"
-          pip install "git+https://github.com/paintbrushv/plat-harness.git@f46a94d95e1e0cf7c314dac2ac9b485b972889bd"
+          uv sync --locked --extra dev --extra intake
+          uv pip install --python .venv/bin/python build twine
+          uv pip install --python .venv/bin/python "git+https://github.com/paintbrushv/plat-multifamily-underwriting.git@96dade6530ef9032c1294e41afaeb7ac8da8f1ba"
+          uv pip install --python .venv/bin/python "git+https://github.com/paintbrushv/plat-costmodel.git@1f82087dc7db1715f44336467c50a92b16748903"
+          uv pip install --python .venv/bin/python "git+https://github.com/paintbrushv/plat-harness.git@a57acc496b1bc945d22c1db8bd1ea324fb8ef697"
       - name: Run mocked test suite (offline, no secrets)
         env:
           # keep the suite offline and credential-free in CI
@@ -27,4 +29,16 @@ jobs:
           UNDERWRITING_MCP_CMD: ""
           PLAT_COSTMODEL_CMD: ""
         run: |
-          pytest tests/ -q
+          .venv/bin/python scripts/release_gate.py
+          .venv/bin/python -m pytest tests/ -q
+      - name: Build candidate distributions
+        run: |
+          .venv/bin/python -m build
+          .venv/bin/python -m twine check dist/*
+          uv pip install --python .venv/bin/python --reinstall --no-deps dist/*.whl
+          uv pip check --python .venv/bin/python
+          .venv/bin/python -I scripts/verify_installed.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/

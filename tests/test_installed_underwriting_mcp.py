@@ -11,10 +11,10 @@ from plat_agent.underwriting_client import UnderwritingClient, _default_mcp_comm
 def test_default_command_needs_no_sibling_cwd(monkeypatch):
     monkeypatch.delenv("UNDERWRITING_MCP_CMD", raising=False)
     monkeypatch.delenv("UNDERWRITING_ENGINE_PATH", raising=False)
-    assert _default_mcp_command() == [sys.executable, "-m", "engine.mcp_server"]
+    assert _default_mcp_command() == [sys.executable, "-I", "-m", "engine.mcp_server"]
     client = UnderwritingClient()
     assert client._server_params.cwd is None
-    assert client._server_params.args == ["-m", "engine.mcp_server"]
+    assert client._server_params.args == ["-I", "-m", "engine.mcp_server"]
 
 
 def test_default_refuses_unreviewed_package_before_spawning(monkeypatch):
@@ -26,7 +26,7 @@ def test_default_refuses_unreviewed_package_before_spawning(monkeypatch):
         raise RuntimeError("producer content mismatch")
 
     monkeypatch.setattr(
-        "plat_agent.underwriting_client.UNDERWRITING_MCP_V3",
+        "plat_agent.underwriting_client.UNDERWRITING_MCP_V4",
         SimpleNamespace(verify=mismatch),
     )
     with pytest.raises(RuntimeError, match="producer content mismatch"):

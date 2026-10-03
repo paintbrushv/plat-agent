@@ -43,7 +43,7 @@ from pathlib import Path
 import anyio
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
-from plat_agent.lifecycle.versioned_adapters import UNDERWRITING_V4, UNDERWRITING_MCP_V3
+from plat_agent.lifecycle.versioned_adapters import UNDERWRITING_V5, UNDERWRITING_MCP_V4
 
 
 def _default_mcp_command() -> list[str]:
@@ -53,7 +53,7 @@ def _default_mcp_command() -> list[str]:
         if not command:
             raise ValueError("UNDERWRITING_MCP_CMD cannot be empty")
         return command
-    return [sys.executable, "-m", "engine.mcp_server"]
+    return [sys.executable, "-I", "-m", "engine.mcp_server"]
 
 
 def _engine_path() -> Path:
@@ -162,7 +162,7 @@ class UnderwritingClient:
     def _submit(self, tool_name: str, arguments: dict) -> dict:
         """Submit a request to the worker thread and block until result."""
         if not self._custom_mcp_command:
-            UNDERWRITING_MCP_V3.verify()
+            UNDERWRITING_MCP_V4.verify()
         self._ensure_worker()
         fut: concurrent.futures.Future = concurrent.futures.Future()
         assert self._requests is not None
@@ -264,6 +264,6 @@ class UnderwritingClient:
             if engine_dir not in sys.path:
                 sys.path.insert(0, engine_dir)
         else:
-            UNDERWRITING_V4.verify()
+            UNDERWRITING_V5.verify()
         from engine.api import handle_run_deal
         return handle_run_deal

@@ -29,14 +29,14 @@ from pathlib import Path
 import anyio
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
-from plat_agent.lifecycle.versioned_adapters import COSTMODEL_V1
+from plat_agent.lifecycle.versioned_adapters import COSTMODEL_V2
 
 
 PLAT_COSTMODEL_PATH_ENV = "PLAT_COSTMODEL_PATH"
 PLAT_COSTMODEL_CMD_ENV = "PLAT_COSTMODEL_CMD"
 _REVIEWED_SERVER_BOOTSTRAP = (
-    "from plat_agent.lifecycle.versioned_adapters import COSTMODEL_V1; "
-    "COSTMODEL_V1.verify(); "
+    "from plat_agent.lifecycle.versioned_adapters import COSTMODEL_V2; "
+    "COSTMODEL_V2.verify(); "
     "from plat_costmodel.server import main; main()"
 )
 
@@ -102,7 +102,7 @@ class CostModelClient:
 
     async def _async_call_tool(self, tool_name: str, arguments: dict) -> dict:
         if self._reviewed_default:
-            COSTMODEL_V1.verify()
+            COSTMODEL_V2.verify()
         try:
             async with stdio_client(self._server_params) as (read, write):
                 async with ClientSession(read, write) as session:

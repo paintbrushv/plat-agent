@@ -25,9 +25,9 @@ python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev,intake]"
 
 # Reviewed public TEST-001 adapters (installable wheels from exact commits).
-pip install "git+https://github.com/paintbrushv/plat-costmodel.git@518142ecb8771e52fcc9985237fe1a6f97a76168"
-pip install "git+https://github.com/paintbrushv/plat-multifamily-underwriting.git@b42764be7d0bf278272ff29ce36e0c98e2c10f5f"
-pip install "git+https://github.com/paintbrushv/plat-harness.git@f46a94d95e1e0cf7c314dac2ac9b485b972889bd"
+pip install "git+https://github.com/paintbrushv/plat-costmodel.git@1f82087dc7db1715f44336467c50a92b16748903"
+pip install "git+https://github.com/paintbrushv/plat-multifamily-underwriting.git@96dade6530ef9032c1294e41afaeb7ac8da8f1ba"
+pip install "git+https://github.com/paintbrushv/plat-harness.git@a57acc496b1bc945d22c1db8bd1ea324fb8ef697"
 
 # Mocked unit tests (no live servers required)
 pytest tests/ -q
@@ -123,3 +123,19 @@ The child has a 120-second timeout and an exhausted search does not pass as a
 solved price. See the producer's `docs/BACKSOLVE_API.md` for the complete contract.
 Historical V1/V2/V3 package pins and public thesis fixtures v3/v4 remain unchanged;
 new synthetic evidence is in fixture v5.
+
+## MCP 2 packaging candidate
+
+Candidate 0.1.1 uses MCP 2.3–2.x and a refreshed `uv.lock`. Use
+`uv sync --locked --extra dev --extra intake` for development, then install the
+reviewed producer commits in the setup instructions above. CI uses those same
+immutable pins and verifies their package content digests before stdio calls.
+Current adapters are `COSTMODEL_V2`, `UNDERWRITING_V5`, and
+`UNDERWRITING_MCP_V4`; prior identities and thesis fixtures remain unchanged.
+Fixture v6 records the new source identities with unchanged financial expectations.
+
+CI also builds the wheel/source archive, installs the agent wheel, runs
+`scripts/verify_installed.py` outside the checkout with source overrides removed,
+and checks both actual MCP servers using only synthetic data. Tagged publication
+requires full tests, matching runtime/package/tag versions, and an unused PyPI
+version. No package publication is part of this candidate change.
