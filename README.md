@@ -16,7 +16,7 @@ Given structured `DealInputs` (property facts, unit mix, analyst rent assumption
 3. Maps the bridge output into the canonical deal schema (`renovation_programs`).
 4. If a base deal was provided and all unit types clear the ROI gate, runs the underwriting engine and returns IRR / EM / DSCR / cap rates alongside a feasibility verdict.
 
-The output is a `DealAnalysis` containing per-unit-type results, property totals, risk flags, the underwriting-ready `renovation_programs` array, and a human-readable summary.
+The output is a `DealAnalysis` containing per-unit-type results, property totals, the underwriting-ready `renovation_programs` array, and a human-readable summary.
 
 ## Quick start
 
@@ -37,13 +37,13 @@ plat analyze --deal-file tests/fixtures/sample_hills_deal.json
 plat check-inputs --deal-file deal.json
 ```
 
-The installed costmodel and underwriting distributions are checked against reviewed package versions and complete packaged content digests before TEST-001 calculations, both default MCP servers, and direct underwriting/scenario/agency calls. These paths do not resolve sibling source checkouts. The current underwriting MCP adapter is `plat.underwriting.mcp/1` in producer package 0.1.1. Federated prompt dispatch still uses configured sibling or host services; see *Environment variables* below.
+The installed costmodel and underwriting distributions are checked against reviewed package versions and complete packaged content digests before TEST-001 calculations, both default MCP servers, and direct underwriting/scenario/agency calls. These paths do not resolve sibling source checkouts. The current underwriting MCP adapter is `plat.underwriting.mcp/1` in producer package 0.1.2. Federated prompt dispatch still uses configured sibling or host services; see *Environment variables* below.
 
 ## Environment variables
 
 ```bash
 # Optional server override; the default uses the installed, verified package
-# in an isolated child interpreter with MCP 1.x.
+# in an isolated child interpreter with MCP 2.3–2.x.
 export PLAT_COSTMODEL_CMD="/path/to/.venv/bin/python -m plat_costmodel.server"
 
 # Optional host override; the default uses the pinned installed producer
