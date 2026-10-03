@@ -377,7 +377,7 @@ from plat_agent.lifecycle.cache import write_provenance
 from plat_agent.lifecycle.complete_marker import write_complete_marker
 from plat_agent.lifecycle.protocol import StepResult
 from plat_agent.lifecycle.state import LifecycleState
-from plat_agent.lifecycle.versioned_adapters import UNDERWRITING_V3
+from plat_agent.lifecycle.versioned_adapters import UNDERWRITING_V4
 
 
 JUDGMENT_FILE_MANIFEST = [
@@ -601,7 +601,7 @@ def _maybe_synthesize_house_base_case(
         return engine_inputs, {"house_base_case_applied": False}, None
 
     # Verify the installed API implementation before starting the child.
-    UNDERWRITING_V3.verify()
+    UNDERWRITING_V4.verify()
 
     from engine.backsolve_policy import resolve_policy
 

@@ -99,3 +99,13 @@ UNDERWRITING_V3 = PackageContractV1(
     suffixes=frozenset({".py", ".json"}), file_count=55,
 )
 UNDERWRITING_MCP_V2 = UNDERWRITING_V3
+
+
+# Source-neutral vacancy provenance; previous identities remain immutable.
+UNDERWRITING_V4 = PackageContractV1(
+    distribution="plat-multifamily-underwriting", module="engine", version="0.1.1",
+    source_sha="b42764be7d0bf278272ff29ce36e0c98e2c10f5f",
+    content_sha256="09cb0b1af19b475eb98598908f05c0475ed9a922768218192c478f3d2b3474d5",
+    suffixes=frozenset({".py", ".json"}), file_count=55,
+)
+UNDERWRITING_MCP_V3 = UNDERWRITING_V4

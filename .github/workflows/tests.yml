@@ -17,7 +17,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev,intake]"
-          pip install "git+https://github.com/paintbrushv/plat-multifamily-underwriting.git@a548b7810f25e296afedff5be94f2e9291701590"
+          pip install "git+https://github.com/paintbrushv/plat-multifamily-underwriting.git@b42764be7d0bf278272ff29ce36e0c98e2c10f5f"
           pip install "git+https://github.com/paintbrushv/plat-costmodel.git@518142ecb8771e52fcc9985237fe1a6f97a76168"
           pip install "git+https://github.com/paintbrushv/plat-harness.git@f46a94d95e1e0cf7c314dac2ac9b485b972889bd"
       - name: Run mocked test suite (offline, no secrets)

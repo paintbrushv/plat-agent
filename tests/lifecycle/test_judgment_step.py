@@ -328,7 +328,7 @@ def test_house_base_case_refuses_stale_solver_before_writing(
         def verify(self):
             raise RuntimeError("reviewed source differs")
 
-    monkeypatch.setattr(judgment_module, "UNDERWRITING_V3", StaleAdapter())
+    monkeypatch.setattr(judgment_module, "UNDERWRITING_V4", StaleAdapter())
 
     def unexpected_run(*args, **kwargs):
         raise AssertionError("stale producer must not be invoked")

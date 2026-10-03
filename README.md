@@ -26,7 +26,7 @@ pip install -e ".[dev,intake]"
 
 # Reviewed public TEST-001 adapters (installable wheels from exact commits).
 pip install "git+https://github.com/paintbrushv/plat-costmodel.git@518142ecb8771e52fcc9985237fe1a6f97a76168"
-pip install "git+https://github.com/paintbrushv/plat-multifamily-underwriting.git@10a88ed393e6d6611c8c710b5e15ef64e128af6b"
+pip install "git+https://github.com/paintbrushv/plat-multifamily-underwriting.git@b42764be7d0bf278272ff29ce36e0c98e2c10f5f"
 pip install "git+https://github.com/paintbrushv/plat-harness.git@f46a94d95e1e0cf7c314dac2ac9b485b972889bd"
 
 # Mocked unit tests (no live servers required)
@@ -121,5 +121,5 @@ sourced `debt_guidance.hold_matched_recommendation` is also accepted. Missing
 metadata refuses; the agent no longer inserts a Treasury rate or house strategy.
 The child has a 120-second timeout and an exhausted search does not pass as a
 solved price. See the producer's `docs/BACKSOLVE_API.md` for the complete contract.
-Historical V1/V2 package pins and public thesis fixture v3 remain unchanged;
-new synthetic evidence is in fixture v4.
+Historical V1/V2/V3 package pins and public thesis fixtures v3/v4 remain unchanged;
+new synthetic evidence is in fixture v5.
