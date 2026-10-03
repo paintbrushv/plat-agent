@@ -37,13 +37,13 @@ plat analyze --deal-file tests/fixtures/sample_hills_deal.json
 plat check-inputs --deal-file deal.json
 ```
 
-The installed costmodel and underwriting distributions are checked against reviewed package versions and complete packaged content digests before TEST-001 calculations, both default MCP servers, and direct underwriting/scenario/agency calls. These paths do not resolve sibling source checkouts. The current underwriting MCP adapter is `plat.underwriting.mcp/1` in producer package 0.1.1. Federated prompt dispatch still uses configured sibling or host services; see *Environment variables* below.
+The installed costmodel and underwriting distributions are checked against reviewed package versions and complete packaged content digests before TEST-001 calculations, both default MCP servers, and direct underwriting/scenario/agency calls. These paths do not resolve sibling source checkouts. The current underwriting MCP adapter is `plat.underwriting.mcp/1` in producer package 0.1.2. Federated prompt dispatch still uses configured sibling or host services; see *Environment variables* below.
 
 ## Environment variables
 
 ```bash
 # Optional server override; the default uses the installed, verified package
-# in an isolated child interpreter with MCP 1.x.
+# in an isolated child interpreter with MCP 2.3–2.x.
 export PLAT_COSTMODEL_CMD="/path/to/.venv/bin/python -m plat_costmodel.server"
 
 # Optional host override; the default uses the pinned installed producer
@@ -100,7 +100,7 @@ When `base_deal_inputs` is present, the generated `renovation_programs` are merg
 - **Federated siblings are not bundled.** The federated workflow dispatches to separate cost, underwriting, and market-study repos. The reviewed cost and underwriting engines are public installable packages for TEST-001; some agent-prompt dispatch flows still need a configured sibling repo. The default mocked tests run offline.
 - **Cross-repo integration tests are opt-in.** Tests marked `integration` require explicitly configured sibling repositories and skip otherwise; tests marked `e2e_live` hit live external services and are excluded from CI.
 - **Live smoke is manual.** `tests/smoke_test_live.py` spawns real MCP subprocesses and is run manually, not by the suite.
-- **Versioned TEST-001 adapter.** The reviewed installed packages are required for the synthetic interior/roof/underwriting calculation. An absent package or different build refuses calculations. The package version alone is insufficient because these producers currently label multiple commits `0.1.0`; adapter v1 also checks all packaged source and data files against the reviewed commits.
+- **Versioned TEST-001 adapter.** The reviewed installed packages are required for the synthetic interior/roof/underwriting calculation. An absent package or different build refuses calculations. A package version alone cannot identify a reviewed source revision; the adapter also checks all packaged source and data files against the reviewed commits.
 - **Validation is synthetic-only.** The lifecycle fixtures are hand-built synthetic deals; no real deal data ships with this repository.
 
 ## Sanitize gate
