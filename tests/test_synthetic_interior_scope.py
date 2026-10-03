@@ -13,7 +13,7 @@ from pathlib import Path
 
 import pytest
 
-from plat_agent.lifecycle.versioned_adapters import COSTMODEL_V1, UNDERWRITING_V4
+from plat_agent.lifecycle.versioned_adapters import COSTMODEL_V2, UNDERWRITING_V5
 from plat_agent.lifecycle.synthetic_interior_scope import (
     SYNTHETIC_DEFERRED_ROOF,
     SYNTHETIC_INTERIOR_SCOPE,
@@ -43,7 +43,7 @@ _FORBIDDEN_SOURCE = (
 
 
 def _require_reviewed_packages() -> None:
-    for contract in (COSTMODEL_V1, UNDERWRITING_V4):
+    for contract in (COSTMODEL_V2, UNDERWRITING_V5):
         try:
             importlib.metadata.version(contract.distribution)
         except importlib.metadata.PackageNotFoundError:
@@ -71,16 +71,16 @@ def test_saved_inputs_match_pinned_public_underwriting_fixture() -> None:
     fixture = files("plat_agent.lifecycle").joinpath("fixtures/test001_underwriting_inputs.json")
     inputs = json.loads(fixture.read_text(encoding="utf-8"))
     assert inputs["metadata"]["deal_id"] == "TEST-001"
-    assert UNDERWRITING_SHA == "b42764be7d0bf278272ff29ce36e0c98e2c10f5f"
+    assert UNDERWRITING_SHA == "96dade6530ef9032c1294e41afaeb7ac8da8f1ba"
     snapshot = json.loads(
-        (Path(__file__).parent / "fixtures/test001_public_thesis_v5.json").read_text(encoding="utf-8")
+        (Path(__file__).parent / "fixtures/test001_public_thesis_v6.json").read_text(encoding="utf-8")
     )
     assert hashlib.sha256(fixture.read_bytes()).hexdigest() == snapshot["source"]["saved_input_sha256"]
 
 
 def test_stale_underwriting_package_is_refused() -> None:
     _require_reviewed_packages()
-    stale = replace(UNDERWRITING_V4, content_sha256="0" * 64)
+    stale = replace(UNDERWRITING_V5, content_sha256="0" * 64)
     with pytest.raises(RuntimeError, match="contents differ"):
         stale.verify()
 
@@ -98,9 +98,9 @@ def test_wrong_costmodel_version_is_refused(monkeypatch) -> None:
     original = importlib.metadata.version
     monkeypatch.setattr(
         importlib.metadata, "version",
-        lambda name: "0.0.1" if name == COSTMODEL_V1.distribution else original(name),
+        lambda name: "0.0.1" if name == COSTMODEL_V2.distribution else original(name),
     )
-    with pytest.raises(RuntimeError, match="requires version 0.1.0"):
+    with pytest.raises(RuntimeError, match="requires version 0.1.1"):
         interior_capex(SYNTHETIC_INTERIOR_SCOPE, unit_counts=SYNTHETIC_INTERIOR_UNIT_COUNTS)
 
 
@@ -199,9 +199,9 @@ def test_synthetic_roof_is_an_explicit_assumption() -> None:
     source = inspect.getsource(synthetic_roof_capex)
     assert "unit_count" not in source
     assert "SYNTHETIC_INTERIOR_UNIT_COUNTS" not in source
-    loaded = COSTMODEL_V1.verify() / "deferred_estimator.py"
+    loaded = COSTMODEL_V2.verify() / "deferred_estimator.py"
     assert loaded.is_file()
-    assert COSTMODEL_V1.source_sha == "518142ecb8771e52fcc9985237fe1a6f97a76168"
+    assert COSTMODEL_V2.source_sha == "8fba6e47ccf383682fc66ad0a94bc576e0aac92c"
 
 
 def test_interior_plus_synthetic_roof_adds_roof_capex_and_presents_no_bid() -> None:
@@ -254,7 +254,7 @@ def test_engine_metric_records_a_new_withheld_thesis() -> None:
     assert record.thesis.present_as_bid is False
     assert record.operations_actual_noi is None
     snapshot = json.loads(
-        (Path(__file__).parent / "fixtures/test001_public_thesis_v5.json").read_text(encoding="utf-8")
+        (Path(__file__).parent / "fixtures/test001_public_thesis_v6.json").read_text(encoding="utf-8")
     )
     assert snapshot["source"]["underwriting_sha"] == UNDERWRITING_SHA
     assert snapshot["original_thesis"] == {

@@ -109,3 +109,19 @@ UNDERWRITING_V4 = PackageContractV1(
     suffixes=frozenset({".py", ".json"}), file_count=55,
 )
 UNDERWRITING_MCP_V3 = UNDERWRITING_V4
+
+
+# MCP 2 packaging candidates. Historical producer identities above remain immutable.
+COSTMODEL_V2 = PackageContractV1(
+    distribution="plat-costmodel", module="plat_costmodel", version="0.1.1",
+    source_sha="8fba6e47ccf383682fc66ad0a94bc576e0aac92c",
+    content_sha256="8d36482bdf6348185b25d22055ed467e72fe284abafa7ef944267c0a0d4b1516",
+    suffixes=frozenset({".py", ".yaml", ".sql"}), file_count=36,
+)
+UNDERWRITING_V5 = PackageContractV1(
+    distribution="plat-multifamily-underwriting", module="engine", version="0.1.2",
+    source_sha="96dade6530ef9032c1294e41afaeb7ac8da8f1ba",
+    content_sha256="aefbe6913ca7ac4104cfd13f9f1e32b1aed4091f2cb849760f075cc6bfe5128f",
+    suffixes=frozenset({".py", ".json"}), file_count=55,
+)
+UNDERWRITING_MCP_V4 = UNDERWRITING_V5

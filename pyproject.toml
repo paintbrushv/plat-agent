@@ -1,16 +1,19 @@
 [build-system]
-requires = ["setuptools>=68.0", "setuptools-scm>=8.0"]
+requires = ["setuptools>=77.0", "setuptools-scm>=8.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "plat-agent"
-version = "0.1.0"
+version = "0.1.1"
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 description = "Plat orchestration agent — deal analysis via MCP tool composition"
 requires-python = ">=3.11"
 dependencies = [
     "click>=8.0",
     "pydantic>=2.0",
-    "mcp>=1.23,<2",
+    "mcp>=2.3,<3",
     "anyio>=4.0",
     "httpx",
     "claude-agent-sdk>=0.1.68",

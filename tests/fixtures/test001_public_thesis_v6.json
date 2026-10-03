@@ -1,0 +1,30 @@
+{
+  "data_class": "synthetic",
+  "deal_id": "TEST-001",
+  "source": {
+    "underwriting_sha": "96dade6530ef9032c1294e41afaeb7ac8da8f1ba",
+    "underwriting_fixture": "tests/conftest.py:minimal_deal_inputs",
+    "saved_input_sha256": "e02bb325c0156f2ce323f7127fd024c581739498f652addf38fb237acd7c1e70",
+    "costmodel_sha": "8fba6e47ccf383682fc66ad0a94bc576e0aac92c"
+  },
+  "original_thesis": {
+    "purchase_price": "13500000",
+    "year_2_unlevered_noi": "1039354.8",
+    "capex": "1758150.0",
+    "year_2_unlevered_yield_on_cost": "0.06811800906400841517484098662",
+    "present_as_bid": false,
+    "operations_actual_noi": null
+  },
+  "numeric_reasonability": {
+    "present_as_bid": false,
+    "bid": null,
+    "breaches": [
+      {
+        "field": "exit_cap",
+        "value": "0.055",
+        "band": "[0.06, 0.12]"
+      }
+    ]
+  },
+  "supersedes": "test001_public_thesis_v5.json"
+}
