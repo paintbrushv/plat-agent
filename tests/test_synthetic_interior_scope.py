@@ -13,7 +13,7 @@ from pathlib import Path
 
 import pytest
 
-from plat_agent.lifecycle.versioned_adapters import COSTMODEL_V1, UNDERWRITING_V2
+from plat_agent.lifecycle.versioned_adapters import COSTMODEL_V1, UNDERWRITING_V3
 from plat_agent.lifecycle.synthetic_interior_scope import (
     SYNTHETIC_DEFERRED_ROOF,
     SYNTHETIC_INTERIOR_SCOPE,
@@ -43,7 +43,7 @@ _FORBIDDEN_SOURCE = (
 
 
 def _require_reviewed_packages() -> None:
-    for contract in (COSTMODEL_V1, UNDERWRITING_V2):
+    for contract in (COSTMODEL_V1, UNDERWRITING_V3):
         try:
             importlib.metadata.version(contract.distribution)
         except importlib.metadata.PackageNotFoundError:
@@ -71,16 +71,16 @@ def test_saved_inputs_match_pinned_public_underwriting_fixture() -> None:
     fixture = files("plat_agent.lifecycle").joinpath("fixtures/test001_underwriting_inputs.json")
     inputs = json.loads(fixture.read_text(encoding="utf-8"))
     assert inputs["metadata"]["deal_id"] == "TEST-001"
-    assert UNDERWRITING_SHA == "10a88ed393e6d6611c8c710b5e15ef64e128af6b"
+    assert UNDERWRITING_SHA == "a548b7810f25e296afedff5be94f2e9291701590"
     snapshot = json.loads(
-        (Path(__file__).parent / "fixtures/test001_public_thesis_v3.json").read_text(encoding="utf-8")
+        (Path(__file__).parent / "fixtures/test001_public_thesis_v4.json").read_text(encoding="utf-8")
     )
     assert hashlib.sha256(fixture.read_bytes()).hexdigest() == snapshot["source"]["saved_input_sha256"]
 
 
 def test_stale_underwriting_package_is_refused() -> None:
     _require_reviewed_packages()
-    stale = replace(UNDERWRITING_V2, content_sha256="0" * 64)
+    stale = replace(UNDERWRITING_V3, content_sha256="0" * 64)
     with pytest.raises(RuntimeError, match="contents differ"):
         stale.verify()
 
@@ -254,7 +254,7 @@ def test_engine_metric_records_a_new_withheld_thesis() -> None:
     assert record.thesis.present_as_bid is False
     assert record.operations_actual_noi is None
     snapshot = json.loads(
-        (Path(__file__).parent / "fixtures/test001_public_thesis_v3.json").read_text(encoding="utf-8")
+        (Path(__file__).parent / "fixtures/test001_public_thesis_v4.json").read_text(encoding="utf-8")
     )
     assert snapshot["source"]["underwriting_sha"] == UNDERWRITING_SHA
     assert snapshot["original_thesis"] == {

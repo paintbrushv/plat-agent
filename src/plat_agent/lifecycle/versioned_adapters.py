@@ -89,3 +89,13 @@ UNDERWRITING_V2 = PackageContractV1(
 
 # The producer's first packaged MCP protocol ships in the V2 package.
 UNDERWRITING_MCP_V1 = UNDERWRITING_V2
+
+
+# Public backsolve API and explicit dated assumptions. Historical V1/V2 pins remain above.
+UNDERWRITING_V3 = PackageContractV1(
+    distribution="plat-multifamily-underwriting", module="engine", version="0.1.1",
+    source_sha="a548b7810f25e296afedff5be94f2e9291701590",
+    content_sha256="c34d2f2365e6b5251180fc94fc40b1333f34ef62684d82c841c72be73161acbb",
+    suffixes=frozenset({".py", ".json"}), file_count=55,
+)
+UNDERWRITING_MCP_V2 = UNDERWRITING_V3

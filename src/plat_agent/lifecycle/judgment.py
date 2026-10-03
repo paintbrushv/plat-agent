@@ -377,7 +377,7 @@ from plat_agent.lifecycle.cache import write_provenance
 from plat_agent.lifecycle.complete_marker import write_complete_marker
 from plat_agent.lifecycle.protocol import StepResult
 from plat_agent.lifecycle.state import LifecycleState
-from plat_agent.lifecycle.versioned_adapters import UNDERWRITING_V2
+from plat_agent.lifecycle.versioned_adapters import UNDERWRITING_V3
 
 
 JUDGMENT_FILE_MANIFEST = [
@@ -387,8 +387,6 @@ JUDGMENT_FILE_MANIFEST = [
     "_provenance.json",
 ]
 
-DEFAULT_BENCHMARK_5YR_TREASURY = "0.04"
-DEFAULT_HOUSE_STRATEGY = "cashflow"
 
 
 def _input_paths(run_dir: Path) -> list[Path]:
@@ -435,17 +433,17 @@ def _needs_house_base_case(engine_inputs: dict[str, Any]) -> bool:
     return purchase_price in (None, "", 0, 0.0)
 
 
-def _solver_benchmark_from_engine_inputs(engine_inputs: dict[str, Any]) -> str:
+def _solver_benchmark_from_engine_inputs(engine_inputs: dict[str, Any]) -> dict[str, str]:
+    from engine.backsolve_policy import validate_benchmark
+
     property_summary = ((engine_inputs.get("metadata") or {}).get("property_summary") or {})
+    if "backsolve_benchmark" in property_summary:
+        return validate_benchmark(property_summary["backsolve_benchmark"])
     debt_guidance = property_summary.get("debt_guidance") or {}
     selected = debt_guidance.get("hold_matched_recommendation") or {}
-    benchmark = selected.get("benchmark_rate")
-    if benchmark in (None, "", 0, 0.0):
-        return DEFAULT_BENCHMARK_5YR_TREASURY
-    try:
-        return f"{float(benchmark):.4f}"
-    except (TypeError, ValueError):
-        return DEFAULT_BENCHMARK_5YR_TREASURY
+    return validate_benchmark({"rate": selected.get("benchmark_rate"),
+                               "as_of": selected.get("benchmark_as_of"),
+                               "source": selected.get("benchmark_source")})
 
 
 def _solver_year_built_from_engine_inputs(engine_inputs: dict[str, Any]) -> int | None:
@@ -602,15 +600,23 @@ def _maybe_synthesize_house_base_case(
     if not _needs_house_base_case(engine_inputs):
         return engine_inputs, {"house_base_case_applied": False}, None
 
-    # The reviewed solver is packaged as engine.backsolve in underwriting
-    # 0.1.1. Check its complete installed content before starting the child.
-    UNDERWRITING_V2.verify()
+    # Verify the installed API implementation before starting the child.
+    UNDERWRITING_V3.verify()
+
+    from engine.backsolve_policy import resolve_policy
+
+    property_summary = ((engine_inputs.get("metadata") or {}).get("property_summary") or {})
+    policy = property_summary.get("backsolve_policy")
+    resolve_policy(policy, engine_inputs)
+    benchmark = _solver_benchmark_from_engine_inputs(engine_inputs)
 
     step_dir = run_dir / "judgment"
     pricing_dir = step_dir / "pricing_policy"
     pricing_dir.mkdir(parents=True, exist_ok=True)
     seed_path = pricing_dir / "_engine_inputs_seed.json"
     atomic_write_json(seed_path, engine_inputs)
+    policy_path = pricing_dir / "backsolve_policy.json"
+    atomic_write_json(policy_path, policy)
     _validate_pricing_seed_before_solver(engine_inputs)
 
     metadata = engine_inputs.get("metadata") or {}
@@ -626,10 +632,16 @@ def _maybe_synthesize_house_base_case(
         str(seed_path),
         "--output-dir",
         str(pricing_dir),
-        "--strategy",
-        DEFAULT_HOUSE_STRATEGY,
+        "--policy-version",
+        policy["version"],
+        "--policy-json",
+        str(policy_path),
         "--benchmark-5yr-treasury",
-        _solver_benchmark_from_engine_inputs(engine_inputs),
+        benchmark["rate"],
+        "--benchmark-as-of",
+        benchmark["as_of"],
+        "--benchmark-source",
+        benchmark["source"],
     ]
     if year_built is not None:
         command.extend(["--year-built", str(year_built)])
@@ -645,6 +657,7 @@ def _maybe_synthesize_house_base_case(
         command,
         capture_output=True,
         text=True,
+        timeout=120,
     )
     if completed.returncode != 0:
         stderr = (completed.stderr or "").strip()
