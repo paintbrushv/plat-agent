@@ -26,7 +26,7 @@ def test_default_refuses_unreviewed_package_before_spawning(monkeypatch):
         raise RuntimeError("producer content mismatch")
 
     monkeypatch.setattr(
-        "plat_agent.underwriting_client.UNDERWRITING_MCP_V2",
+        "plat_agent.underwriting_client.UNDERWRITING_MCP_V3",
         SimpleNamespace(verify=mismatch),
     )
     with pytest.raises(RuntimeError, match="producer content mismatch"):
