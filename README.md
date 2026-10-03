@@ -16,7 +16,7 @@ Given structured `DealInputs` (property facts, unit mix, analyst rent assumption
 3. Maps the bridge output into the canonical deal schema (`renovation_programs`).
 4. If a base deal was provided and all unit types clear the ROI gate, runs the underwriting engine and returns IRR / EM / DSCR / cap rates alongside a feasibility verdict.
 
-The output is a `DealAnalysis` containing per-unit-type results, property totals, the underwriting-ready `renovation_programs` array, and a human-readable summary.
+The output is a `DealAnalysis` containing per-unit-type results, property totals, risk flags, the underwriting-ready `renovation_programs` array, and a human-readable summary.
 
 ## Quick start
 
@@ -100,7 +100,7 @@ When `base_deal_inputs` is present, the generated `renovation_programs` are merg
 - **Federated siblings are not bundled.** The federated workflow dispatches to separate cost, underwriting, and market-study repos. The reviewed cost and underwriting engines are public installable packages for TEST-001; some agent-prompt dispatch flows still need a configured sibling repo. The default mocked tests run offline.
 - **Cross-repo integration tests are opt-in.** Tests marked `integration` require explicitly configured sibling repositories and skip otherwise; tests marked `e2e_live` hit live external services and are excluded from CI.
 - **Live smoke is manual.** `tests/smoke_test_live.py` spawns real MCP subprocesses and is run manually, not by the suite.
-- **Versioned TEST-001 adapter.** The reviewed installed packages are required for the synthetic interior/roof/underwriting calculation. An absent package or different build refuses calculations. The package version alone is insufficient because these producers currently label multiple commits `0.1.0`; adapter v1 also checks all packaged source and data files against the reviewed commits.
+- **Versioned TEST-001 adapter.** The reviewed installed packages are required for the synthetic interior/roof/underwriting calculation. An absent package or different build refuses calculations. A package version alone cannot identify a reviewed source revision; the adapter also checks all packaged source and data files against the reviewed commits.
 - **Validation is synthetic-only.** The lifecycle fixtures are hand-built synthetic deals; no real deal data ships with this repository.
 
 ## Sanitize gate
