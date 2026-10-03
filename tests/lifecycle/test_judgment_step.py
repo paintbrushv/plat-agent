@@ -304,7 +304,10 @@ def test_house_base_case_uses_pinned_installed_solver_without_sibling_checkout(
     result, provenance, blocker = judgment_module._maybe_synthesize_house_base_case(
         state=LifecycleState(deal_slug="d", run_id="run_001"),
         run_dir=run_dir,
-        engine_inputs={"metadata": {}},
+        engine_inputs={"metadata": {"property_summary": {
+            "backsolve_policy": {"version": "plat.backsolve-policy/1", "strategy": "cashflow", "exit_cap_rate": "0.06"},
+            "backsolve_benchmark": {"rate": "0.04", "as_of": "2026-10-03", "source": "synthetic:test"},
+        }}},
     )
     assert result["purchase_assumptions"]["purchase_price"] == 20_000_000
     assert provenance["house_base_case_applied"] is True
@@ -312,6 +315,9 @@ def test_house_base_case_uses_pinned_installed_solver_without_sibling_checkout(
     command, kwargs = calls.pop()
     assert command[:4] == [judgment_module.sys.executable, "-I", "-m", "engine.backsolve"]
     assert "cwd" not in kwargs
+    assert kwargs["timeout"] == 120
+    assert command[command.index("--benchmark-as-of") + 1] == "2026-10-03"
+    assert command[command.index("--benchmark-source") + 1] == "synthetic:test"
     assert not calls
 
 
@@ -322,7 +328,7 @@ def test_house_base_case_refuses_stale_solver_before_writing(
         def verify(self):
             raise RuntimeError("reviewed source differs")
 
-    monkeypatch.setattr(judgment_module, "UNDERWRITING_V2", StaleAdapter())
+    monkeypatch.setattr(judgment_module, "UNDERWRITING_V3", StaleAdapter())
 
     def unexpected_run(*args, **kwargs):
         raise AssertionError("stale producer must not be invoked")

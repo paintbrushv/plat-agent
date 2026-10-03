@@ -110,3 +110,16 @@ When `base_deal_inputs` is present, the generated `renovation_programs` are merg
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). By contributing you agree your contributions are licensed under Apache-2.0 (see [LICENSE](LICENSE)).
+
+## Backsolve assumptions (v0.1 candidate)
+
+House base-case synthesis now uses the content-pinned public underwriting API
+through its CLI. A zero/missing purchase price requires both
+`metadata.property_summary.backsolve_policy` (version `plat.backsolve-policy/1`
+and strategy) and `backsolve_benchmark` (`rate`, `as_of`, `source`). A dated,
+sourced `debt_guidance.hold_matched_recommendation` is also accepted. Missing
+metadata refuses; the agent no longer inserts a Treasury rate or house strategy.
+The child has a 120-second timeout and an exhausted search does not pass as a
+solved price. See the producer's `docs/BACKSOLVE_API.md` for the complete contract.
+Historical V1/V2 package pins and public thesis fixture v3 remain unchanged;
+new synthetic evidence is in fixture v4.

@@ -120,10 +120,20 @@ def test_solver_benchmark_reads_hold_matched_debt_guidance_when_present() -> Non
             "hold_matched_recommendation": {
                 "loan_option": "Agency 5 Year Fixed",
                 "benchmark_rate": 0.0391,
+                "benchmark_as_of": "2026-10-03",
+                "benchmark_source": "synthetic:test",
             }
         }
     }
-    assert _solver_benchmark_from_engine_inputs(intake) == "0.0391"
+    assert _solver_benchmark_from_engine_inputs(intake) == {
+        "rate": "0.0391", "as_of": "2026-10-03", "source": "synthetic:test"}
+
+
+def test_solver_has_no_silent_benchmark_fallback() -> None:
+    import pytest
+
+    with pytest.raises(ValueError, match="benchmark"):
+        _solver_benchmark_from_engine_inputs({})
 
 
 def test_pricing_seed_preflight_allows_normal_workforce_opex_stack() -> None:
