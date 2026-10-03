@@ -201,7 +201,7 @@ def test_synthetic_roof_is_an_explicit_assumption() -> None:
     assert "SYNTHETIC_INTERIOR_UNIT_COUNTS" not in source
     loaded = COSTMODEL_V2.verify() / "deferred_estimator.py"
     assert loaded.is_file()
-    assert COSTMODEL_V2.source_sha == "8fba6e47ccf383682fc66ad0a94bc576e0aac92c"
+    assert COSTMODEL_V2.source_sha == "1f82087dc7db1715f44336467c50a92b16748903"
 
 
 def test_interior_plus_synthetic_roof_adds_roof_capex_and_presents_no_bid() -> None:

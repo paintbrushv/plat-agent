@@ -20,8 +20,8 @@ jobs:
           uv sync --locked --extra dev --extra intake
           uv pip install --python .venv/bin/python build twine
           uv pip install --python .venv/bin/python "git+https://github.com/paintbrushv/plat-multifamily-underwriting.git@96dade6530ef9032c1294e41afaeb7ac8da8f1ba"
-          uv pip install --python .venv/bin/python "git+https://github.com/paintbrushv/plat-costmodel.git@8fba6e47ccf383682fc66ad0a94bc576e0aac92c"
-          uv pip install --python .venv/bin/python "git+https://github.com/paintbrushv/plat-harness.git@21c982f3b374fe568975adfcd4513904b4c7b5f5"
+          uv pip install --python .venv/bin/python "git+https://github.com/paintbrushv/plat-costmodel.git@1f82087dc7db1715f44336467c50a92b16748903"
+          uv pip install --python .venv/bin/python "git+https://github.com/paintbrushv/plat-harness.git@a57acc496b1bc945d22c1db8bd1ea324fb8ef697"
       - name: Run mocked test suite (offline, no secrets)
         env:
           # keep the suite offline and credential-free in CI

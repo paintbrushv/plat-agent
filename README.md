@@ -25,9 +25,9 @@ python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev,intake]"
 
 # Reviewed public TEST-001 adapters (installable wheels from exact commits).
-pip install "git+https://github.com/paintbrushv/plat-costmodel.git@8fba6e47ccf383682fc66ad0a94bc576e0aac92c"
+pip install "git+https://github.com/paintbrushv/plat-costmodel.git@1f82087dc7db1715f44336467c50a92b16748903"
 pip install "git+https://github.com/paintbrushv/plat-multifamily-underwriting.git@96dade6530ef9032c1294e41afaeb7ac8da8f1ba"
-pip install "git+https://github.com/paintbrushv/plat-harness.git@05b54faa6843af71511ad10c86b7a38838f50e43"
+pip install "git+https://github.com/paintbrushv/plat-harness.git@a57acc496b1bc945d22c1db8bd1ea324fb8ef697"
 
 # Mocked unit tests (no live servers required)
 pytest tests/ -q

@@ -118,20 +118,20 @@ wheels = [
 
 [[package]]
 name = "claude-agent-sdk"
-version = "0.1.68"
+version = "0.2.163"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
+    { name = "jsonschema" },
     { name = "mcp" },
     { name = "sniffio" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/27/cb/a3e2250bba1d6e7a41e34f832dbb1427ec1391d59897189d429b2875952a/claude_agent_sdk-0.1.68.tar.gz", hash = "sha256:5f8c9e29f08852878ed8ba9f91cff0287d069002b9522497c3229a5bd3e483ac", size = 239251 }
+sdist = { url = "https://files.pythonhosted.org/packages/9b/74/635d38e2ef813a2d1ba4ff7f3de736c35ee3bce9ebf4a5b7e89f3293604f/claude_agent_sdk-0.2.163.tar.gz", hash = "sha256:269821ad5acff5967522ff15f444b0598840fd9bdc45c645de569a5478061a53", size = 365180 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/cf/84/347e9ecc4e293b6a0a80557a5527d0e0b28bfdd6c4ce9fac907436a606b9/claude_agent_sdk-0.1.68-py3-none-macosx_11_0_arm64.whl", hash = "sha256:4e5228ffeae2bfa195e2526c446b5a926a1f4015da35e3efd142f817cf2c6dfb", size = 63221614 },
-    { url = "https://files.pythonhosted.org/packages/d0/18/e83cdf6c1e7025e735b546b83ff88fcb9762082e61b068a9e52c280caee6/claude_agent_sdk-0.1.68-py3-none-macosx_11_0_x86_64.whl", hash = "sha256:4aeb266002b7ca97167072cf04bc3098db5bc8d2daa08a6f84ed29f2d48e2545", size = 65187622 },
-    { url = "https://files.pythonhosted.org/packages/aa/6c/70769392db3f8717afd48d0c2a5f1b8524f030ef42f203bac4f07f2ab443/claude_agent_sdk-0.1.68-py3-none-manylinux_2_17_aarch64.whl", hash = "sha256:2053151067347dd2b980f59632478f14b5323b627efb97fea41233e8bf891831", size = 76635725 },
-    { url = "https://files.pythonhosted.org/packages/b9/61/4b6f08a5d92a8077e5a29af1ba69f04c9465082781061b9271e981092287/claude_agent_sdk-0.1.68-py3-none-manylinux_2_17_x86_64.whl", hash = "sha256:59c7873e39ac7aa572fae25466abc5c34abb3da64eaf60790ed9ddd6dd4759b7", size = 76613056 },
-    { url = "https://files.pythonhosted.org/packages/8b/c1/3bd1f00529aa1b43f6f57d18ebe5272c3f4cec4bc25f543d78562639a932/claude_agent_sdk-0.1.68-py3-none-win_amd64.whl", hash = "sha256:6f06b744bf20a82d937a3ac705b26807f14936ec1b0c79349208e11a2e89413b", size = 78349055 },
+    { url = "https://files.pythonhosted.org/packages/c7/48/bd56b852692a99939384c25ae6bbcbd6e9017ce5becf28c1e00d8ce83c24/claude_agent_sdk-0.2.163-py3-none-macosx_11_0_arm64.whl", hash = "sha256:b025dcc3f9c52779bcd9e9c088b1a587d96afbffb8355b5d3053850796735ede", size = 93359293 },
+    { url = "https://files.pythonhosted.org/packages/ba/c0/73f36a7435037ae06541be0fd6fdfe4f3270e6fd958a4523ee1c90e2737d/claude_agent_sdk-0.2.163-py3-none-macosx_11_0_x86_64.whl", hash = "sha256:e10d48657f01cc53801cdd8ec3d0a6c8c680b82da083da42493f82feb99d04e6", size = 97793458 },
+    { url = "https://files.pythonhosted.org/packages/13/c7/d8fbc84fa75b79f5a57af1595a79b0a392844fcb192aad09ef8c646b6c85/claude_agent_sdk-0.2.163-py3-none-manylinux_2_17_aarch64.whl", hash = "sha256:e3be00eeb9fc156a3308a2e8fb58390768fdcb2ff16683fac385b4d98e99233c", size = 102851414 },
+    { url = "https://files.pythonhosted.org/packages/e7/ea/fc2a0a4e27c8ccfdbc77344298842adcbb6de03d4cdbae5793ff659b00e0/claude_agent_sdk-0.2.163-py3-none-manylinux_2_17_x86_64.whl", hash = "sha256:260cb955d237b7e1897f1dbf9ee5efbf815d8622d0c7459a05409c56432d8501", size = 103197060 },
 ]
 
 [[package]]
@@ -633,7 +633,7 @@ intake = [
 [package.metadata]
 requires-dist = [
     { name = "anyio", specifier = ">=4.0" },
-    { name = "claude-agent-sdk", specifier = ">=0.1.68" },
+    { name = "claude-agent-sdk", specifier = ">=0.2.163,<0.3" },
     { name = "click", specifier = ">=8.0" },
     { name = "httpx" },
     { name = "jinja2", specifier = ">=3.1" },
@@ -1176,8 +1176,8 @@ name = "uvicorn"
 version = "0.46.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "click" },
-    { name = "h11" },
+    { name = "click", marker = "python_full_version < '3.12' or python_full_version >= '3.14' or sys_platform != 'emscripten'" },
+    { name = "h11", marker = "python_full_version < '3.12' or python_full_version >= '3.14' or sys_platform != 'emscripten'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/1f/93/041fca8274050e40e6791f267d82e0e2e27dd165627bd640d3e0e378d877/uvicorn-0.46.0.tar.gz", hash = "sha256:fb9da0926999cc6cb22dc7cd71a94a632f078e6ae47ff683c5c420750fb7413d", size = 88758 }
 wheels = [

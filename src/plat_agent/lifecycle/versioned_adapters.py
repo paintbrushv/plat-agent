@@ -114,7 +114,7 @@ UNDERWRITING_MCP_V3 = UNDERWRITING_V4
 # MCP 2 packaging candidates. Historical producer identities above remain immutable.
 COSTMODEL_V2 = PackageContractV1(
     distribution="plat-costmodel", module="plat_costmodel", version="0.1.1",
-    source_sha="8fba6e47ccf383682fc66ad0a94bc576e0aac92c",
+    source_sha="1f82087dc7db1715f44336467c50a92b16748903",
     content_sha256="8d36482bdf6348185b25d22055ed467e72fe284abafa7ef944267c0a0d4b1516",
     suffixes=frozenset({".py", ".yaml", ".sql"}), file_count=36,
 )
